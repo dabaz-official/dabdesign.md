@@ -23,12 +23,22 @@ colors:
   color-primary-pressed: "#RRGGBB"
   color-primary-subtle: "#RRGGBB"
   color-on-primary: "#RRGGBB"
-  color-success: "#RRGGBB"
-  color-warning: "#RRGGBB"
-  color-danger: "#RRGGBB"
-  color-focus: "#RRGGBB"
-  color-selection-bg: "#RRGGBB"
-  color-selection-fg: "#RRGGBB"
+  # Functional colors — Proposed (OD-001), light-theme values
+  color-success: "#008C3F"
+  color-success-strong: "#007131"
+  color-success-subtle: "#DEF1E1"
+  color-on-success: "#FFFFFF"
+  color-warning: "#936E00"
+  color-warning-strong: "#775800"
+  color-warning-subtle: "#F4EAD7"
+  color-on-warning: "#FFFFFF"
+  color-danger: "#CC3336"
+  color-danger-strong: "#AD1621"
+  color-danger-subtle: "#FFE4E1"
+  color-on-danger: "#FFFFFF"
+  color-focus: "#4C89EF"
+  color-selection-bg: "#171717"
+  color-selection-fg: "#FFFFFF"
   color-overlay: "rgba(0, 0, 0, 0.50)"
 
 typography:
@@ -128,7 +138,7 @@ components: {}   # Core intentionally ships no components. See the shared layer.
 # DabWave Core Design System — Specification
 
 **Document status:** Draft | In review | Approved  
-**Core version:** 0.1  
+**Core version:** 0.2  
 **Owner:** `<name / role>`  
 **Approvers:** `<design owner>, <engineering owner>`  
 **Last updated:** `YYYY-MM-DD`  
@@ -291,19 +301,66 @@ functional set that must never vary.
 
 ### 4.3 Action and functional colors
 
-| Role | Light | Dark | Status | Notes |
-|---|---|---|---|---|
-| `color-primary` | `<value>` | `<value>` | `<status>` | Site-mapped action color; neutral sites map it to ink |
-| `color-primary-hover` | `<value>` | `<value>` | `<status>` | Hover state |
-| `color-primary-pressed` | `<value>` | `<value>` | `<status>` | Pressed state |
-| `color-primary-subtle` | `<value>` | `<value>` | `<status>` | Tinted background for selected or soft states |
-| `color-on-primary` | `<value>` | `<value>` | `<status>` | Content on primary; choose by contrast |
-| `color-success` | `<value>` | `<value>` | `<status>` | Separate from the site accent ramp |
-| `color-warning` | `<value>` | `<value>` | `<status>` | Separate from the site accent ramp |
-| `color-danger` | `<value>` | `<value>` | `<status>` | Separate from the site accent ramp |
-| `color-focus` | `<value>` | `<value>` | `<status>` | Must remain visible on both themes |
-| `color-selection-bg` | `<value>` | `<value>` | `<status>` | Text selection |
-| `color-selection-fg` | `<value>` | `<value>` | `<status>` | Text selection |
+**Action colors** are the five accent aliases. The core fixes the role names;
+each site theme supplies the values (neutral sites map them to ink — see
+section 11).
+
+| Role | Value source |
+|---|---|
+| `color-primary` | site accent ramp (default anchor step) or ink |
+| `color-primary-hover` | site accent ramp |
+| `color-primary-pressed` | site accent ramp |
+| `color-primary-subtle` | site accent ramp |
+| `color-on-primary` | chosen by contrast against `color-primary` |
+
+**Functional colors** are core-fixed and identical on every site. Status:
+**Proposed** — do not implement as approved until `OD-001` in section 14 is
+closed. Generated with the OKLCH method; hues: success `150`, warning `85`,
+danger `25`. Every functional color shares one step skeleton:
+
+| Role | Meaning | Light step | Dark step |
+|---|---|---|---|
+| `color-success` | icons, borders, non-text graphics (3:1) | `600` | `400` |
+| `color-success-strong` | text on surfaces; solid fills carrying text | `700` | `300` |
+| `color-success-subtle` | tint background | `100` | `900` |
+| `color-on-success` | content on a `-strong` solid fill | white | `gray-1000` |
+
+`color-warning-*` and `color-danger-*` use the same steps.
+
+| Token | Light | Dark |
+|---|---|---|
+| `color-success` | `#008C3F` | `#69BE7D` |
+| `color-success-strong` | `#007131` | `#98D1A3` |
+| `color-success-subtle` | `#DEF1E1` | `#003F18` |
+| `color-on-success` | `#FFFFFF` | `#000000` |
+| `color-warning` | `#936E00` | `#C8A24F` |
+| `color-warning-strong` | `#775800` | `#D8BE86` |
+| `color-warning-subtle` | `#F4EAD7` | `#423000` |
+| `color-on-warning` | `#FFFFFF` | `#000000` |
+| `color-danger` | `#CC3336` | `#F3827A` |
+| `color-danger-strong` | `#AD1621` | `#FAA8A1` |
+| `color-danger-subtle` | `#FFE4E1` | `#65000A` |
+| `color-on-danger` | `#FFFFFF` | `#000000` |
+
+**Focus** — `color-focus` is one fixed value in both themes: `#4C89EF`
+(`oklch(0.64 0.166 260)`). Ring spec: 2px solid, 2px offset. The offset gap keeps
+the ring separable from any fill, including a same-hue site accent.
+
+**Selection** — theme inversion using approved neutrals:
+
+| Token | Light | Dark |
+|---|---|---|
+| `color-selection-bg` | `gray-900` | `gray-50` |
+| `color-selection-fg` | `gray-0` | `gray-950` |
+
+**Rules.**
+
+- Text-carrying solid fills use the `-strong` step; the base step is for icons,
+  borders, and non-text graphics only.
+- Functional colors never follow the site accent hue.
+- `gray-900` and `gray-50` serve dual roles (primary text and selection
+  background in their respective themes); the reuse is intentional and documented here.
+- All measured ratios are recorded in section 10.1.
 
 ### 4.4 Accent ramp contract
 
@@ -577,18 +634,45 @@ overflow.
 
 ### 10.1 Contrast
 
+Core neutral pairs (approved design.md mappings; dark text mappings are the
+accepted values still awaiting contextual validation, see `OD-002`):
+
 | Pair | Context | Ratio | Normal | Large | Verdict |
 |---|---|---:|---|---|---|
-| `{colors.color-text-primary}` on `{colors.color-background}` | Body | `00.0:1` | `<pass/fail>` | `<pass/fail>` | `<pass/fail>` |
-| `{colors.color-text-secondary}` on `{colors.color-surface}` | Card | `00.0:1` | `<pass/fail>` | `<pass/fail>` | `<pass/fail>` |
-| `{colors.color-on-primary}` on `{colors.color-primary}` | Primary action | `00.0:1` | `<pass/fail>` | `<pass/fail>` | `<pass/fail>` |
+| `{colors.color-text-primary}` on `{colors.color-background}` — light (gray-900 / gray-50) | Body | `17.2:1` | pass | pass | pass |
+| `{colors.color-text-secondary}` on `{colors.color-surface}` — light (gray-600 / gray-0) | Card | `7.8:1` | pass | pass | pass |
+| `{colors.color-text-primary}` on `{colors.color-background}` — dark (gray-50 / gray-950) | Body | `19.0:1` | pass | pass | pass |
+| `{colors.color-text-secondary}` on `{colors.color-surface}` — dark (gray-300 / gray-900) | Card | `12.1:1` | pass | pass | pass |
+
+Functional colors — **Proposed** values, measured 2026-10-24:
+
+| Pair | Ratio | Min | Verdict |
+|---|---:|---:|---|
+| `color-success` on gray-50 / gray-0 | `4.17 / 4.35` | 3 | pass |
+| `color-success-strong` on gray-50 / gray-0 | `5.91 / 6.16` | 4.5 | pass |
+| white on `color-success-strong` | `6.16` | 4.5 | pass |
+| gray-900 on `color-success-subtle` | `15.17` | 4.5 | pass |
+| `color-warning` on gray-50 / gray-0 | `4.50 / 4.70` | 3 | pass |
+| `color-warning-strong` on gray-50 / gray-0 | `6.33 / 6.60` | 4.5 | pass |
+| white on `color-warning-strong` | `6.60` | 4.5 | pass |
+| gray-900 on `color-warning-subtle` | `15.02` | 4.5 | pass |
+| `color-danger` on gray-50 / gray-0 | `4.91 / 5.13` | 3 | pass |
+| `color-danger-strong` on gray-50 / gray-0 | `6.91 / 7.21` | 4.5 | pass |
+| white on `color-danger-strong` | `7.21` | 4.5 | pass |
+| gray-900 on `color-danger-subtle` | `14.89` | 4.5 | pass |
+| dark base (`400`) on gray-950 / gray-900 | `7.1–8.7` | 4.5 | pass |
+| gray-1000 on dark `-strong` (`300`) | `11.2–12.0` | 4.5 | pass |
+| gray-50 on dark `-subtle` (`900`) | `11.7–12.9` | 4.5 | pass |
+| `color-focus` vs all six neutral surfaces | `3.14–5.78` | 3 | pass |
+| selection fg on bg (light / dark) | `17.9 / 19.0` | 4.5 | pass |
 
 Compute ratios; do not estimate. Test each pair on its actual surface.
 
 ### 10.2 Focus
 
 - Every keyboard-focusable element has a visible focus indicator.
-- Specify color, width, offset, and radius.
+- Proposed spec: 2px solid `{colors.color-focus}` ring with 2px offset, keeping
+  the element's own radius (see section 4.3).
 - Verify focus on light and dark surfaces.
 - Do not remove the outline without an approved replacement.
 
@@ -730,7 +814,9 @@ Do not fabricate values to make this document look complete.
 
 | ID | Decision / gap | Impact | Owner | Status | Target date |
 |---|---|---|---|---|---|
-| `OD-001` | `<e.g. final neutral palette>` | `<what is blocked>` | `<owner>` | `<status>` | `YYYY-MM-DD` |
+| `OD-001` | Approve the proposed functional color values in section 4.3 | Blocks all status, feedback, and focus UI | DabAZ | Proposed — awaiting approval | `2026-10-25` |
+| `OD-002` | Validate the accepted dark-theme text mappings (design.md §3.4) on real surfaces | Blocks dark-theme release | DabAZ | Pending validation | `2026-10-31` |
+| `OD-003` | DabMusic brand accent: launch with ink (gray), red hue reserved for a future theme update | Site theme decision only; no core change | DabAZ | Deferred | — |
 
 Rules:
 
@@ -746,6 +832,7 @@ Rules:
 | Version | Date | Change | Author | Status |
 |---|---|---|---|---|
 | `0.1` | `YYYY-MM-DD` | Initial core skeleton | `<author>` | Draft |
+| `0.2` | `2026-10-24` | Proposed functional color values (success / warning / danger / focus / selection), focus ring spec, measured contrast results in §10 | DabAZ | Proposed |
 
 ---
 
@@ -759,6 +846,7 @@ Rules:
 | Core | The fixed foundation layer defined in this document. |
 | Site theme | The allowed per-site expression layer defined in section 11. |
 | Accent ramp | A per-site 10-step color scale (50–900) from which the five accent roles are mapped. Not a functional color. |
+| Functional color | Core-fixed status color (success, warning, danger, focus, selection); identical on every site. |
 | Pill | Fully rounded shape using `radius-full`. |
 | Capsule | Rounded rectangle with a fixed radius smaller than half its height. |
 | Rounded rectangle | Rectangle using a fixed radius token such as `radius-md`. |
