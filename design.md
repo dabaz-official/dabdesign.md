@@ -116,11 +116,11 @@ Component tokens are reserved for cases where a component genuinely needs a stab
 
 - Use clear, role-based token names.
 - Keep primitive values separate from semantic theme mappings.
-- CSS custom properties are the intended implementation mechanism.
+- The implementation mechanism is intentionally not prescribed. Tokens must be expressible in whatever form the target platform uses, such as design-tool variables, native theme resources, or platform-level custom properties.
 - Theme changes should primarily update semantic mappings, not duplicate raw values across individual components.
 - Keep token names stable and documented. Avoid exposing implementation-specific details as public API unless intentionally approved.
 
-The `dz-` prefix may be used for exported CSS variable names, consistent with the existing Figma-to-token mapping proposal. For example, `dz-gray-50` and `dz-color-background`. Confirm final CSS naming and export conventions during engineering integration.
+The `dz-` prefix may be used for exported token names where the target platform supports named tokens, for example `dz-gray-50` and `dz-color-background`. Final export naming and format are implementation decisions and must be documented during integration.
 
 ## 2.3 Approved primitive neutral palette
 
@@ -198,7 +198,7 @@ The following mapping reflects the previously confirmed baseline. The revised se
 Use WCAG AA contrast targets:
 
 - **Normal text:** contrast ratio of at least `4.5:1`.
-- **Large text:** contrast ratio of at least `3:1`. Large text generally means at least 18 pt (24 CSS px) regular, or at least 14 pt (approximately 18.67 CSS px) bold.
+- **Large text:** contrast ratio of at least `3:1`. Large text generally means at least 18 pt (24 density-independent px) regular, or at least 14 pt (approximately 18.67 density-independent px) bold.
 - **Essential non-text interface components and visual states:** at least `3:1` where the WCAG non-text contrast requirement applies.
 
 Contrast checks must be performed on the actual foreground/background pair, including semantic text on page backgrounds, surfaces, secondary surfaces, inputs, and overlays where applicable.
@@ -259,10 +259,10 @@ The following items remain open and must not be treated as approved:
 1. Final contrast verification of the revised Light/Dark text mappings across all relevant surfaces.
 2. Final opacity for `color-overlay`.
 3. Exact Light/Dark values for success, warning, danger, focus, and selection states.
-4. Final public CSS variable naming and token export conventions.
+4. Final public token naming and export conventions.
 5. Final typography and letter-spacing validation.
 6. Exact Light/Dark values for success, warning, danger, focus, and selection states.
-7. Final public CSS variable naming and token export conventions.
+7. Final public token naming and export conventions.
 8. Shadow/elevation and transition scales, to be defined only when concrete component needs are tested.
 9. Final contrast verification of accepted text mappings across all relevant surfaces.
 
@@ -278,7 +278,7 @@ When implementing or modifying UI for DabAZ Design System:
 4. Treat proposed or pending-validation mappings as provisional; do not claim that contrast has passed unless it has actually been checked.
 5. Keep Light and Dark behavior in semantic theme mappings instead of scattering theme-specific literals across components.
 6. Preserve the original logo and its approved form.
-7. Keep implementation changes aligned with the existing React + TypeScript, Vite, CSS Variables, CSS Modules, pnpm, and Vitest stack. Do not add frameworks or dependencies without a clear benefit.
+7. Keep implementation choices outside this document. Do not treat any framework, library, build tool, or styling technology as part of the design standard; choose them per project and document the choice separately.
 8. When an unresolved decision blocks implementation, state the assumption and its impact rather than silently treating it as an approved standard.
 
 
@@ -294,12 +294,7 @@ When implementing or modifying UI for DabAZ Design System:
 - Body text should prioritize readability; use typography hierarchy rather than color alone to distinguish importance.
 - Use font weights 400, 500, 600, and 700 for the roles defined below. Avoid adding more weights without a demonstrated need.
 
-Suggested CSS font stack:
-
-```css
-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-  "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-```
+Suggested font stack: Inter, followed by the platform's system sans-serif and appropriate Chinese fallbacks such as PingFang SC, Hiragino Sans GB, or Microsoft YaHei where available.
 
 The stack is a practical starting point. Verify glyph availability and rendering on supported platforms before finalizing font loading and fallback behavior.
 
@@ -364,7 +359,7 @@ Existing responsive candidates:
 
 The small-screen values for `heading-lg`, `display-sm`, and `display-lg` are alternatives, not yet a single approved choice. Choose them based on real layout tests.
 
-Validate at least desktop, tablet, and mobile widths. Check English, Chinese, and mixed-language headings for natural wrapping. Decide between `clamp()` and explicit breakpoint changes based on implementation simplicity and the actual design behavior.
+Validate at least desktop, tablet, and mobile widths. Check English, Chinese, and mixed-language headings for natural wrapping. Decide between fluid scaling and explicit breakpoint changes based on implementation simplicity and the actual design behavior.
 
 ---
 
@@ -449,11 +444,11 @@ Rules:
 
 ## 8.1 Responsive principles
 
-- Use mobile-first CSS and progressively enhance layouts at larger breakpoints.
+- Use a mobile-first approach and progressively enhance layouts at larger breakpoints.
 - Let content and interaction needs determine layout changes, while using the shared breakpoints below as the system defaults.
 - Avoid horizontal overflow, cramped headings, and controls that become difficult to use on small screens.
 - Keep body typography stable by default; scale display typography selectively.
-- Prefer CSS Grid and Flexbox for layout; do not introduce a layout framework for these foundations.
+- Use the platform's native layout primitives; do not introduce a layout framework for these foundations.
 
 ## 8.2 Breakpoints
 
@@ -467,7 +462,7 @@ Rules:
 | `breakpoint-xl` | 1280px | Wide desktop layouts and increased content width |
 | `breakpoint-2xl` | 1536px | Very wide screens; use for restrained expansion only |
 
-Implementation note: CSS custom properties cannot be substituted directly into media-query conditions in standard CSS. Keep breakpoint values centralized in the source/build configuration or shared CSS conventions, and document them alongside CSS custom-property tokens. Do not pretend that a `var(--breakpoint-*)` expression works in a conventional media query.
+Implementation note: Keep breakpoint values centralized in the chosen styling system and documented alongside the other tokens. If the implementation cannot reference token variables in breakpoint conditions, define the values in the appropriate configuration layer rather than duplicating literals across components.
 
 Use breakpoints when the content or layout needs them, not merely to change styles at every breakpoint. Validate at 375px, 640px, 768px, 1024px, 1280px, and 1536px.
 
@@ -556,7 +551,7 @@ In addition to the items in Section 4, these details remain open:
 4. Fine-grained typography and letter-spacing validation.
 5. Shadow/elevation and transition scales.
 6. Focus-ring details and final functional-state colors.
-7. Final CSS variable naming and public token export conventions.
+7. Final public token naming and export conventions.
 8. Contrast verification across actual component and surface combinations.
 
 These omissions are intentional. Do not fabricate values to make the specification appear complete. The spacing, radius, sizing, breakpoint, and container defaults above are approved for the initial foundation implementation and should be tested rather than reopened by the coding agent.
@@ -590,7 +585,7 @@ Before expanding the component library, create a responsive **Foundation Test Pa
 6. **Sizing:** show icon sizes and control heights, with buttons/inputs represented as test specimens if the existing component implementation is ready. Do not build a full component library just to populate this page.
 7. **Borders and surfaces:** compare standard and strong borders, surface levels, dividers, and focus-state visibility in both themes.
 8. **Containers and grid:** demonstrate `container-sm` through `container-2xl`, fluid layout, page gutters, and representative 12-column desktop grid behavior.
-9. **Responsive behavior:** provide a clear viewport/readout label and verify the page at 375, 390, 640, 768, 1024, 1280, and 1536 CSS pixels. If the preview tooling cannot resize the viewport in-page, document the widths and validate using browser responsive mode.
+9. **Responsive behavior:** provide a clear viewport/readout label and verify the page at 375, 390, 640, 768, 1024, 1280, and 1536 density-independent pixels. If the preview tooling cannot resize the viewport in-page, document the widths and validate using the preview environment's responsive viewport controls.
 10. **Contrast checks:** include a concise table of actual foreground/background pairs and calculated contrast ratios for text and essential UI boundaries. Clearly flag failures; never display an unverified ratio as passing.
 
 ## 12.2 Interaction requirements
@@ -614,4 +609,4 @@ Before expanding the component library, create a responsive **Foundation Test Pa
 
 ## 12.4 Agent deliverables
 
-The coding agent should report: (1) files created or changed, (2) implemented token tables and theme behavior, (3) viewport widths tested, (4) contrast failures or visual issues found, (5) test/build commands actually run and their results, and (6) decisions that still require human review. Never claim a viewport, contrast check, test, or build passed unless it was actually verified.
+The coding agent should report: (1) files created or changed, (2) implemented token tables and theme behavior, (3) viewport widths tested, (4) contrast failures or visual issues found, (5) verification commands actually run and their results, and (6) decisions that still require human review. Never claim a viewport, contrast check, or verification passed unless it was actually verified.
