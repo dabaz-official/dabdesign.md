@@ -11,10 +11,10 @@ description: >
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — blank slate; no design decisions recorded yet (§13)  
+**Document status:** Draft — DAB-001 (architecture) and DAB-002 (accessibility policy) ratified; remaining decisions Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
-**Last updated:** 2026-11-01  
+**Last updated:** 2026-11-06  
 **Applies to:** all DabWave websites — DabAZ (official site), DabMusic, DabSudoku, DabMinesweeper, and future sites  
 **Consumers:** the maintainer (solo developer) and coding agents
 
@@ -34,8 +34,8 @@ description: >
 ## 0. How to use this document
 
 1. **Coding agents:** read §1–3 before generating any UI; read §9 before
-   building or modifying a component; §10 gates releases once its target is
-   ratified (DAB-002); §11 applies to all user-facing copy.
+   building or modifying a component; §10 gates every release; §11 applies to
+   all user-facing copy.
 2. **Never invent a decision.** Propose through §2.2; if an open decision
    blocks work, state the assumption and its impact explicitly instead of
    treating it as settled.
@@ -75,7 +75,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — all currently Open |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001, DAB-002), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -196,6 +196,7 @@ from retired documents carry no status and are not inherited.
 | ID | Date | Decision | Rationale | Status |
 |---|---|---|---|---|
 | ADR-001 | 2026-11-01 | System architecture: two layers — a fixed **Core foundation** and a per-site **Theme layer** with a whitelist contract (accent, surface tint, composition, imagery, content voice); light and dark are first-class themes with core-defined mappings; site themes supply values in both modes | Balances cross-site consistency with per-product identity for DabAZ 官网 / DabMusic / DabSudoku / DabMinesweeper; agents keep hard defaults while exceptions stay explicit and auditable. Alternatives: single-layer unified system (rejected — flattens game/music identity, costly to reverse) and federation (rejected — re-creates the drift this system exists to remove) | Accepted (Owner) |
+| ADR-002 | 2026-11-06 | Accessibility policy: conformance target **WCAG 2.2 Level AA** as the system baseline, with named opt-ins (44×44 targets §10.4; SC 2.4.13 focus geometry §10.2); contrast thresholds = WCAG mapping — text 4.5:1, large text 3:1, non-text UI incl. focus 3:1, disabled exempt but recorded, secondary text stays 4.5:1; focus policy = 2px outline + 2px offset keeping the element's radius, indicator ≥ 3:1 against adjacent colors; focus color value deferred to DAB-006 | WCAG 2.2 AA is the current standard and matches what §10 already leans on (target size, focus); the WCAG threshold mapping keeps `scripts/oklch-ramp.mjs` authoritative with zero changes and gives DAB-004…DAB-006 one acceptance line; blanket AAA is unrealistic for warm-hue accents and a solo maintainer. Alternatives: WCAG 2.1 AA (rejected — already superseded, would force a second migration), uniform 4.5:1 for all text (rejected — breaks yellow/lime anchor steps for no real gain), principles-only focus policy (rejected — cross-site drift is what this system exists to prevent) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -213,6 +214,7 @@ Specification-level changes are listed here; file history lives in git.
 |---|---|---|---|
 | `0.1.0` | 2026-11-01 | Blank-slate enterprise draft: framework ratified, all design decisions opened as DAB-001…DAB-013 | Draft |
 | `0.1.0` | 2026-11-01 | DAB-001 adopted — two-layer architecture (core + site themes), §1.6, §3.5 | Draft |
+| `0.1.0` | 2026-11-06 | DAB-002 ratified — WCAG 2.2 AA baseline; contrast thresholds (§10.1); focus policy geometry (§10.2) | Draft |
 
 ---
 
@@ -460,19 +462,36 @@ radius, shadow), **variants**, **sizes**, **state matrix**, **accessibility**
 
 ## 10. Accessibility & Interaction
 
-**Conformance target: open — DAB-002.** The checklist structure below is
-framework; the target and numeric thresholds are ratified by DAB-002.
+**Conformance target: WCAG 2.2 Level AA — ratified by DAB-002 (2026-11-06).**
+The checklist structure below is framework. Named opt-ins above the baseline,
+each deliberate: 44×44 touch targets (§10.4, stricter than SC 2.5.8's 24px) and
+the focus geometry of SC 2.4.13 (§10.2 — a AAA criterion adopted as house
+policy). Blanket AAA conformance is a non-goal.
 
 ### 10.1 Contrast
 
 Every foreground/background pair is measured on its actual surface (page, card,
 input, overlay) in every ratified theme; results are recorded in a table.
-"Estimated ~" ratios are documentation defects.
+"Estimated ~" ratios are documentation defects. Ratified thresholds:
+
+| Content | Minimum | WCAG criterion |
+|---|---|---|
+| Body text and every text style below large-text size — secondary and muted text included | 4.5:1 | 1.4.3 |
+| Large text (≥ 24px regular, ≥ 18.66px bold) | 3:1 | 1.4.3 |
+| Non-text UI: interactive component boundaries, informative icons, focus indicators | 3:1 | 1.4.11 |
+| Disabled controls | Exempt, but recorded in the table — never silently omitted | 1.4.3 exception |
+
+Secondary and muted text are still text: they meet 4.5:1. "It's only a hint" is
+not a relaxation. These thresholds are the acceptance line for DAB-004, DAB-005,
+and DAB-006 values, and they are what `scripts/oklch-ramp.mjs` enforces.
 
 ### 10.2 Focus
 
-- Every keyboard-focusable element has a visible indicator with ratified color,
-  width, and offset (DAB-006), keeping the element's own radius.
+- Every keyboard-focusable element has a visible indicator with ratified color
+  (DAB-006), keeping the element's own radius.
+- **Ratified geometry (DAB-002):** outline 2px, offset 2px. The indicator must
+  hold ≥ 3:1 against the colors adjacent to it — the geometry of WCAG 2.2 SC
+  2.4.13, adopted as house policy and mandatory here.
 - Verified on every ratified theme and surface. The outline is never removed
   without an approved replacement.
 
@@ -573,7 +592,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | ID | Area | Question (abridged) | Depends on | Status |
 |---|---|---|---|---|
 | `DAB-001` | System architecture | Layering model; what varies per site; theming model (light/dark, site themes) | — | **Approved (2026-11-01)** — ADR-001 |
-| `DAB-002` | Accessibility policy | Conformance target; contrast thresholds; focus policy | DAB-001 | Open |
+| `DAB-002` | Accessibility policy | Conformance target; contrast thresholds; focus policy | DAB-001 | **Approved (2026-11-06)** — ADR-002 |
 | `DAB-003` | Color system model | Palette structure; accent strategy; functional set shape | DAB-001, DAB-002 | Open |
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | Open |
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | Open |
