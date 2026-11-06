@@ -11,7 +11,7 @@ description: >
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001 (architecture) and DAB-002 (accessibility policy) ratified; remaining decisions Open (§13)  
+**Document status:** Draft — DAB-001 (architecture) and DAB-002 (accessibility policy) ratified; DAB-003 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-06  
@@ -215,6 +215,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-01 | Blank-slate enterprise draft: framework ratified, all design decisions opened as DAB-001…DAB-013 | Draft |
 | `0.1.0` | 2026-11-01 | DAB-001 adopted — two-layer architecture (core + site themes), §1.6, §3.5 | Draft |
 | `0.1.0` | 2026-11-06 | DAB-002 ratified — WCAG 2.2 AA baseline; contrast thresholds (§10.1); focus policy geometry (§10.2) | Draft |
+| `0.1.0` | 2026-11-06 | DAB-003 proposed — three-family palette model, accent ramp contract, functional set (§4.4); awaiting approval | Draft |
 
 ---
 
@@ -265,8 +266,9 @@ Specification-level changes are listed here; file history lives in git.
 
 ## 4. Color — decision area
 
-> **Open.** Decisions DAB-003…DAB-007 (§13). No color values, palette shapes, or
-> accent strategies are decided.
+> **DAB-003 proposed (§4.4), awaiting Owner approval.** DAB-004…DAB-007 (§13)
+> remain open. No color value or palette rule is a standard until its decision
+> is Approved.
 
 ### 4.1 Questions this area must answer
 
@@ -297,11 +299,83 @@ Specification-level changes are listed here; file history lives in git.
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-003` | Color system model: palette structure, accent strategy, functional set shape | Open |
+| `DAB-003` | Color system model: palette structure, accent strategy, functional set shape | Proposed — §4.4 |
 | `DAB-004` | Neutral palette values | Open |
 | `DAB-005` | Semantic roles and light/dark mappings | Open |
 | `DAB-006` | Functional color values, focus and selection treatment | Open |
 | `DAB-007` | Overlay token and opacity | Open |
+
+### 4.4 Proposed answer — DAB-003 (pending Owner approval)
+
+> **Status: Proposed, not approved.** Recorded per §2.2 step 1. Every value
+> below is decided later; this section fixes only structure and governance.
+
+**Family model — three families:**
+
+| Family | Scope | Mutability | Values decided in |
+|---|---|---|---|
+| Neutral ramp | All sites | Core-fixed | DAB-004 |
+| Accent ramp | One per site theme | Site, within contract | Site theme document |
+| Functional colors (`success`, `warning`, `danger`) | All sites | Core-fixed | DAB-006 |
+
+**Neutral-first rule.** Surfaces, text, and borders come from the neutral ramp.
+Color carries action, state, and emphasis only. Accent never carries body text
+or large neutral surfaces; functional colors never carry brand expression.
+
+**Accent contract:**
+
+- One accent ramp per site — ten steps with fixed names `accent-50` …
+  `accent-900` (§3.2). A second accent is a core decision, never a site option.
+- Components consume only five action aliases: `color-primary`,
+  `color-primary-hover`, `color-primary-pressed`, `color-primary-subtle`,
+  `color-on-primary`. Raw `accent-*` steps are never referenced in components.
+- Light and dark map the same five aliases onto different steps of the same
+  ramp. A contrast failure is resolved by remapping an alias, never by editing
+  the lightness ladder.
+- Generation: OKLCH fixed-lightness ladder with a chroma multiplier curve,
+  gamut-clamped by reducing C only — never L or H — implemented by
+  `scripts/oklch-ramp.mjs`. Per-site inputs are hue H, anchor step (chosen by
+  the brand color's L), and base chroma C. The site theme document records H,
+  anchor, C, both alias mappings, and the measured ratios.
+- Allowed uses: primary actions, links, selected and active states, one emphasis
+  element per section. A site whose identity must read neutral may map the five
+  action aliases onto neutral ink; its accent ramp still serves links and
+  selection.
+- Accent is not a status color and never replaces functional colors.
+
+**Functional set:**
+
+- Statuses: `success`, `warning`, `danger`. No `info` status — informational
+  messaging uses a neutral surface and neutral text, and accent is never a
+  status.
+- Each status has four roles — base (icon, border), strong (text),
+  subtle (tint surface), on (text/icon on the base fill):
+  `color-success`, `color-success-strong`, `color-success-subtle`,
+  `color-on-success`; the same quartet for `warning` and `danger`.
+- Every pair is contrast-checked per §10.1; status never relies on color alone
+  (§10.5).
+
+**Focus and selection.** Core-fixed and identical on every site and theme —
+DAB-001 already locks focus behavior. They are not derived from the accent, so
+keyboard affordances cannot drift per site. Values are decided in DAB-006.
+
+**Deferred:** neutral ramp size, values, and tint (DAB-004); the complete
+semantic role set and light/dark mappings (DAB-005); all functional, focus, and
+selection values (DAB-006); overlay (DAB-007).
+
+**Rationale.** Three families give status a testable home while keeping brand
+expression to exactly one variable. The ten-step fixed-L contract is what makes
+ramps comparable across sites. Dropping `info` removes the most common
+accent-versus-status collision. Four status roles cover the real surfaces:
+icon, small text, tinted background, and reverse text.
+
+**Alternatives considered.** Two families (rejected — status needs fixed,
+measurable values); fully themeable functional colors (rejected — cross-site
+status semantics drift); single-value statuses (rejected — forces hidden hex
+values inside components); Radix 12-step ramps (rejected — different step
+semantics invalidates the existing tooling and tutorial); hand-picked per-site
+ramps (rejected — dissolves the shared lightness skeleton that makes the site
+layer governable).
 
 ---
 
@@ -593,7 +667,7 @@ frontmatter if a token is involved, and adding a changelog row.
 |---|---|---|---|---|
 | `DAB-001` | System architecture | Layering model; what varies per site; theming model (light/dark, site themes) | — | **Approved (2026-11-01)** — ADR-001 |
 | `DAB-002` | Accessibility policy | Conformance target; contrast thresholds; focus policy | DAB-001 | **Approved (2026-11-06)** — ADR-002 |
-| `DAB-003` | Color system model | Palette structure; accent strategy; functional set shape | DAB-001, DAB-002 | Open |
+| `DAB-003` | Color system model | Palette structure; accent strategy; functional set shape | DAB-001, DAB-002 | Proposed (2026-11-06) — §4.4 |
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | Open |
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | Open |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | Open |
