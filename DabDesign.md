@@ -27,7 +27,7 @@ colors:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-004 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-004 ratified; DAB-005 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-06  
@@ -236,6 +236,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-003 proposed — three-family palette model, accent ramp contract, functional set (§4.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-06 | DAB-003 ratified — three-family palette model, accent ramp contract, functional set (§4.4) | Draft |
 | `0.1.0` | 2026-11-06 | DAB-004 ratified — 13-step neutral ramp, values frozen in frontmatter, pure neutral; site tint limited to remapping (§4.5) | Draft |
+| `0.1.0` | 2026-11-06 | DAB-005 proposed — semantic role set and light/dark neutral mappings, all pairs measured (§4.6); awaiting approval | Draft |
 
 ---
 
@@ -286,8 +287,9 @@ Specification-level changes are listed here; file history lives in git.
 
 ## 4. Color — decision area
 
-> **DAB-003 and DAB-004 approved (§4.4, §4.5).** DAB-005…DAB-007 (§13) remain
-> open. No color value is a standard until its decision is Approved.
+> **DAB-003 and DAB-004 approved (§4.4, §4.5); DAB-005 proposed (§4.6).**
+> DAB-006…DAB-007 (§13) remain open. No color value is a standard until its
+> decision is Approved.
 
 ### 4.1 Questions this area must answer
 
@@ -320,7 +322,7 @@ Specification-level changes are listed here; file history lives in git.
 |---|---|---|
 | `DAB-003` | Color system model: palette structure, accent strategy, functional set shape | Approved — §4.4 |
 | `DAB-004` | Neutral palette values | Approved — §4.5 |
-| `DAB-005` | Semantic roles and light/dark mappings | Open |
+| `DAB-005` | Semantic roles and light/dark mappings | Proposed — §4.6 |
 | `DAB-006` | Functional color values, focus and selection treatment | Open |
 | `DAB-007` | Overlay token and opacity | Open |
 
@@ -424,6 +426,91 @@ exception.
 **Gap note.** Removing `gray-150` widens the `gray-100` → `gray-200` interval.
 Where a surface/border pair previously relied on 150, use the next ratified step
 and measure the pair (§10.1); do not interpolate.
+
+### 4.6 Proposed answer — DAB-005 (pending Owner approval)
+
+> **Status: Proposed, not approved.** Role names and mappings below are
+> proposals; no component may consume them until the Owner accepts them.
+
+**Role set.**
+
+| Role | Purpose |
+|---|---|
+| `color-background` | Page background |
+| `color-surface` | Primary content surface — cards, panels, inputs |
+| `color-surface-secondary` | Nested or secondary surface — table header, inset panel |
+| `color-text-primary` | Default text |
+| `color-text-secondary` | Supporting text |
+| `color-text-tertiary` | Hints and metadata — still meets 4.5:1 (DAB-002) |
+| `color-text-inverse` | Text on inverted or dark surfaces |
+| `color-text-disabled` | Disabled label; contrast-exempt but perceivable |
+| `color-border` | Decorative divider and card edge |
+| `color-border-strong` | Interactive component boundary — meets 3:1 |
+| `color-primary` … `color-on-primary` | Action roles; shape ratified by DAB-003 (§4.4) |
+| `color-success` / `-warning` / `-danger` (+ `-strong`, `-subtle`, `on-`) | Status roles; shape ratified by DAB-003, values DAB-006 |
+| `color-focus` | Focus indicator; core-fixed, value DAB-006 |
+| `color-selection-bg`, `color-selection-fg` | Text selection; values DAB-006 |
+
+**Mappings — light and dark, with measured ratios.**
+
+| Role | Light | Dark | Lowest measured¹ | Requirement |
+|---|---|---|---|---|
+| `color-background` | `gray-50` | `gray-950` | — | — |
+| `color-surface` | `gray-0` | `gray-900` | — | — |
+| `color-surface-secondary` | `gray-100` | `gray-800` | — | — |
+| `color-text-primary` | `gray-900` | `gray-50` | 14.50:1 | 4.5:1 |
+| `color-text-secondary` | `gray-700` | `gray-300` | 9.51:1 | 4.5:1 |
+| `color-text-tertiary` | `gray-600` | `gray-400` | 6.00:1 | 4.5:1 |
+| `color-text-inverse` | `gray-0` | `gray-900` | 17.18:1 | 4.5:1 |
+| `color-text-disabled` | `gray-400` | `gray-600` | 2.29:1 | Exempt, recorded |
+| `color-border` | `gray-200` | `gray-800` | 1.18:1 | Decorative |
+| `color-border-strong` | `gray-500` | `gray-500` | 3.19:1 | 3:1 |
+
+¹ Lowest across both themes and all three ratified surfaces (background,
+surface, surface-secondary). Ratios were computed with the WCAG 2.2 formula,
+the same math as `scripts/oklch-ramp.mjs`; the full pair list is reproducible
+by measuring every text/border role against every surface.
+
+**Rules.**
+
+- Components consume semantic roles only (§3.1). Primitive `gray-*` steps never
+  appear in component code.
+- `color-border` never carries the only boundary of an interactive control;
+  interactive boundaries use `color-border-strong`. Decorative borders carry no
+  contrast requirement.
+- `color-text-tertiary` is not a contrast escape hatch: hint and metadata text
+  still meets 4.5:1, so it is `gray-600`/`gray-400`, not `gray-500`.
+- `color-text-disabled` is the only contrast-exempt text role (DAB-002), and a
+  disabled control still needs a perceivable state beyond color (§9.2).
+- Role names are identical in light, dark, and site themes (§3.5); components
+  never branch on theme.
+- A site theme may remap which ratified neutral step serves which surface role
+  (DAB-004), but may not rename roles, introduce values, or reorder the
+  hierarchy. Every remap is re-measured and recorded in the site theme document.
+- Focus and selection roles are core-fixed and never accent-derived (DAB-003);
+  their values are decided in DAB-006.
+
+**Frontmatter on approval.** Neutral primitives stay under `colors`; the
+ratified mappings join a `themes` group keyed by theme (`themes.light.*`,
+`themes.dark.*`), with the semantic token names as keys. No values are
+duplicated in the body (§3.3) — this table references steps, not hex.
+
+**Deferred:** all functional, focus, and selection values (DAB-006); overlay
+(DAB-007).
+
+**Rationale.** Three text levels and three surfaces match the hierarchy real
+product pages use. Tertiary at `gray-600`/`gray-400` is the lightest text that
+still clears 4.5:1 on every ratified surface. The border split keeps dividers
+quiet while making interactive boundaries compliant: `gray-400` measures
+2.42–2.52:1 and fails 1.4.11, while `gray-500` is the lightest ratified step
+that passes in both themes (3.19–4.74:1).
+
+**Alternatives considered.** Two text levels (rejected — loses the hint/meta
+distinction product UI needs); four text levels (rejected — no lighter step
+clears 4.5:1 without colliding with disabled); two surfaces (rejected — nested
+surfaces would fall back to borders); `border-strong` at `gray-400` (rejected —
+fails 1.4.11); separate light and dark `border-strong` values (rejected —
+`gray-500` passes both and keeps one memorable boundary value).
 
 ---
 
@@ -717,7 +804,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-002` | Accessibility policy | Conformance target; contrast thresholds; focus policy | DAB-001 | **Approved (2026-11-06)** — ADR-002 |
 | `DAB-003` | Color system model | Palette structure; accent strategy; functional set shape | DAB-001, DAB-002 | **Approved (2026-11-06)** — ADR-003 |
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | **Approved (2026-11-06)** — ADR-004 |
-| `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | Open |
+| `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | Proposed (2026-11-06) — §4.6 |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | Open |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | Open |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Open |
