@@ -84,7 +84,7 @@ themes:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-006 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-006 ratified; DAB-007 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-06  
@@ -299,6 +299,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-005 ratified — semantic roles and light/dark mappings (§4.6); `themes` group added to frontmatter | Draft |
 | `0.1.0` | 2026-11-06 | DAB-006 proposed — generated functional palette, fixed focus blue, neutral-inversion selection (§4.7); awaiting approval | Draft |
 | `0.1.0` | 2026-11-06 | DAB-006 ratified — functional values, focus and selection in frontmatter; `scripts/functional-palette.mjs` reproduces them | Draft |
+| `0.1.0` | 2026-11-06 | DAB-007 proposed — single overlay token at 50% black, modal scrim only (§4.8); awaiting approval | Draft |
 
 ---
 
@@ -349,8 +350,9 @@ Specification-level changes are listed here; file history lives in git.
 
 ## 4. Color — decision area
 
-> **DAB-003…DAB-006 approved (§4.4…§4.7).** DAB-007 (§13) remains open. No
-> color value is a standard until its decision is Approved.
+> **DAB-003…DAB-006 approved (§4.4…§4.7); DAB-007 proposed (§4.8).** The color
+> domain closes once DAB-007 is ratified. No color value is a standard until
+> its decision is Approved.
 
 ### 4.1 Questions this area must answer
 
@@ -385,7 +387,7 @@ Specification-level changes are listed here; file history lives in git.
 | `DAB-004` | Neutral palette values | Approved — §4.5 |
 | `DAB-005` | Semantic roles and light/dark mappings | Approved — §4.6 |
 | `DAB-006` | Functional color values, focus and selection treatment | Approved — §4.7 |
-| `DAB-007` | Overlay token and opacity | Open |
+| `DAB-007` | Overlay token and opacity | Proposed — §4.8 |
 
 ### 4.4 DAB-003 — Color system model (approved 2026-11-06)
 
@@ -664,6 +666,45 @@ leaves one exception and two derivation methods); hand-picked dark values
 (rejected — hue drift between themes); reusing light values in dark (rejected —
 contrast collapses); black `on-success` on the retired green (rejected — makes
 the three `on` roles inconsistent).
+
+### 4.8 Proposed answer — DAB-007 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No component may consume this token
+> until the Owner accepts it.
+
+**Token.** One token, `color-overlay`, with the value `rgba(0, 0, 0, 0.50)` in
+both themes. There is no per-theme variant.
+
+**Use.** Only as the modal scrim behind dialogs, drawers, and command palettes.
+Not for hover or pressed states — those are token changes (§9.2). Not for media
+caption backdrops: a content overlay is a component-level concern with its own
+measured contrast, not a system role.
+
+**Measured.** Light theme: `gray-50` page under scrim 3.94:1, `gray-0` dialog
+over scrim 4.12:1. Dark theme: page 1.03:1, dialog 1.14:1. At 40% the light
+value measures 2.96:1 (below 3:1), which is why 50% is the floor.
+
+**Rule — the dark-theme limit.** A black scrim cannot separate a `gray-900`
+dialog from a `gray-950` page; measured separation stays at 1.13–1.15:1 from
+40% through 70% opacity. In dark theme the scrim signals modality only. A modal
+surface must additionally carry `color-border-strong` (or a ratified elevation
+once DAB-011 lands). Never compensate by raising scrim opacity — it adds no
+separation and dims the page for nothing.
+
+**Frontmatter on approval.** `color-overlay` joins both `themes.light` and
+`themes.dark` with the same value: every semantic role resolves per theme even
+when two themes agree, so tooling never needs a theme-independent branch.
+
+**Rationale.** One value keeps the token surface minimal and matches the
+measured behavior. A second strength has no current use case; a separate
+opacity token invites two-token usage where one is enough.
+
+**Alternatives considered.** 0.60 in both themes (rejected — heavier light
+theme, no dark benefit); per-theme 0.50/0.60 (rejected — measured dark
+separation unchanged); a second `color-overlay-strong` (rejected — no nested
+modal scenario yet); splitting color and opacity into two tokens (rejected —
+easy to consume only one); allowing media or state use (rejected — different
+requirements and conflicts with §9.2).
 
 ---
 
@@ -959,7 +1000,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | **Approved (2026-11-06)** — ADR-004 |
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | **Approved (2026-11-06)** — ADR-005 |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
-| `DAB-007` | Overlay | Token and opacity | DAB-005 | Open |
+| `DAB-007` | Overlay | Token and opacity | DAB-005 | Proposed (2026-11-06) — §4.8 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Open |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
