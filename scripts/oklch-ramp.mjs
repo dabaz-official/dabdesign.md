@@ -6,12 +6,12 @@
  *   node scripts/oklch-ramp.mjs --read "#2563EB"
  *   node scripts/oklch-ramp.mjs --hue 260 --chroma 0.16 --anchor 600
  *
- * Rules implemented (see oklch-brand-color.md and core-template.md §4.4):
+ * Rules implemented (see oklch-brand-color.md and DabDesign.md §4.4, ADR-003):
  * - The 10-step L ladder and the C curve are fixed by the core; per site you
  *   only choose H (hue), the anchor step, and the base chroma C.
  * - Gamut mapping reduces C, never L or H.
- * - Contrast is WCAG 2.x, checked against the neutral palette approved in
- *   design.md §2.3 (shared by all sites — never regenerated per site).
+ * - Contrast is WCAG 2.2, checked against the neutral palette ratified in
+ *   DabDesign.md §4.5 (shared by all sites — never regenerated per site).
  * - If a contrast pair fails, remap the five semantic aliases (this script
  *   suggests the remap); never edit the L ladder.
  *
@@ -33,13 +33,15 @@ const GCURVE = {
   0: 1.0, 1: 0.96, 2: 0.86, 3: 0.7, 4: 0.58, 5: 0.48, 6: 0.4,
 };
 
-// Neutral palette approved in design.md §2.3. Shared across all DabWave sites.
+// Neutral palette ratified by DAB-004 (DabDesign.md §4.5). 13 steps, frozen.
+// Shared across all DabWave sites; sites may only remap which step serves which
+// surface — never substitute a value.
 const NEUTRAL = {
   'gray-0': '#FFFFFF', 'gray-50': '#FAFAFA', 'gray-100': '#F5F5F5',
-  'gray-150': '#EBEBEB', 'gray-200': '#E5E5E5', 'gray-300': '#D4D4D4',
-  'gray-400': '#A3A3A3', 'gray-500': '#737373', 'gray-600': '#525252',
-  'gray-700': '#404040', 'gray-800': '#262626', 'gray-900': '#171717',
-  'gray-950': '#0A0A0A', 'gray-1000': '#000000',
+  'gray-200': '#E5E5E5', 'gray-300': '#D4D4D4', 'gray-400': '#A3A3A3',
+  'gray-500': '#737373', 'gray-600': '#525252', 'gray-700': '#404040',
+  'gray-800': '#262626', 'gray-900': '#171717', 'gray-950': '#0A0A0A',
+  'gray-1000': '#000000',
 };
 
 // ---------- color math (Björn Ottosson's OKLab) ----------
@@ -257,4 +259,5 @@ function report(title, rows) {
 }
 
 console.log('\nNext: record H, anchor, base C, the ramp, both alias mappings and these');
-console.log('ratios in the site theme doc, then fill core-template.md §4.1/§4.2/§10.');
+console.log('ratios in the site theme doc. Core values live in DabDesign.md §4.4/§4.5;');
+console.log('the site document cites them and never restates them.');
