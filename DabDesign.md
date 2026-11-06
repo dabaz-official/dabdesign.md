@@ -53,7 +53,7 @@ themes:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-005 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-005 ratified; DAB-006 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-06  
@@ -265,6 +265,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-004 ratified — 13-step neutral ramp, values frozen in frontmatter, pure neutral; site tint limited to remapping (§4.5) | Draft |
 | `0.1.0` | 2026-11-06 | DAB-005 proposed — semantic role set and light/dark neutral mappings, all pairs measured (§4.6); awaiting approval | Draft |
 | `0.1.0` | 2026-11-06 | DAB-005 ratified — semantic roles and light/dark mappings (§4.6); `themes` group added to frontmatter | Draft |
+| `0.1.0` | 2026-11-06 | DAB-006 proposed — generated functional palette, fixed focus blue, neutral-inversion selection (§4.7); awaiting approval | Draft |
 
 ---
 
@@ -315,8 +316,9 @@ Specification-level changes are listed here; file history lives in git.
 
 ## 4. Color — decision area
 
-> **DAB-003…DAB-005 approved (§4.4…§4.6).** DAB-006…DAB-007 (§13) remain
-> open. No color value is a standard until its decision is Approved.
+> **DAB-003…DAB-005 approved (§4.4…§4.6); DAB-006 proposed (§4.7).**
+> DAB-007 (§13) remains open. No color value is a standard until its decision
+> is Approved.
 
 ### 4.1 Questions this area must answer
 
@@ -350,7 +352,7 @@ Specification-level changes are listed here; file history lives in git.
 | `DAB-003` | Color system model: palette structure, accent strategy, functional set shape | Approved — §4.4 |
 | `DAB-004` | Neutral palette values | Approved — §4.5 |
 | `DAB-005` | Semantic roles and light/dark mappings | Approved — §4.6 |
-| `DAB-006` | Functional color values, focus and selection treatment | Open |
+| `DAB-006` | Functional color values, focus and selection treatment | Proposed — §4.7 |
 | `DAB-007` | Overlay token and opacity | Open |
 
 ### 4.4 DAB-003 — Color system model (approved 2026-11-06)
@@ -539,6 +541,96 @@ clears 4.5:1 without colliding with disabled); two surfaces (rejected — nested
 surfaces would fall back to borders); `border-strong` at `gray-400` (rejected —
 fails 1.4.11); separate light and dark `border-strong` values (rejected —
 `gray-500` passes both and keeps one memorable boundary value).
+
+### 4.7 Proposed answer — DAB-006 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No component may consume these values
+> until the Owner accepts them.
+
+**Derivation.** Each status is defined by one hue and one chroma; its four role
+values are generated with the OKLCH fixed-lightness method (the same math as
+the accent ramp, gamut-clamped by reducing C only):
+
+| Status | Hue | Chroma |
+|---|---:|---:|
+| success | 150.0 | 0.154 |
+| warning | 85.2 | 0.115 |
+| danger | 24.9 | 0.190 |
+
+Light roles use L 0.52 (base), 0.44 (strong), 0.95 (subtle, C × 0.25); dark
+roles use L 0.72 (base), 0.82 (strong), 0.25 (subtle, C × 0.35). `on-*` is
+`#FFFFFF` in light and `gray-1000` in dark. Values are generated, never
+hand-picked; changing any input means re-running the derivation and
+re-measuring every pair below.
+
+**Values.**
+
+| Status | Theme | base | strong | subtle | on |
+|---|---|---|---|---|---|
+| success | light | `#007F38` | `#00642B` | `#DDF6E1` | `#FFFFFF` |
+| success | dark | `#50BF6F` | `#72E08D` | `#0B2913` | `gray-1000` |
+| warning | light | `#856300` | `#694E00` | `#F7EED9` | `#FFFFFF` |
+| warning | dark | `#C59F47` | `#E6BE68` | `#2A2008` | `gray-1000` |
+| danger | light | `#BE222A` | `#9E0017` | `#FFE9E6` | `#FFFFFF` |
+| danger | dark | `#FF716B` | `#FFAAA3` | `#3C1211` | `gray-1000` |
+
+**Role use.**
+
+- **base** — icons, borders, indicators on neutral surfaces; ≥ 3:1.
+- **strong** — status text on neutral surfaces; ≥ 4.5:1. Small text never uses
+  base.
+- **subtle** — alert and banner background; text on it is `text-primary`,
+  `strong`, or `base` (all measured).
+- **on** — text or icon on its own base fill only; ≥ 4.5:1.
+
+**Measured results** — worst case across all three ratified surfaces:
+
+| Pair | Light | Dark | Requirement |
+|---|---:|---:|---:|
+| `on` on `base` | 5.13:1 (success) | 7.83:1 (danger) | 4.5:1 |
+| `strong` on surfaces | 6.74:1 | 8.31:1 | 4.5:1 |
+| `base` on surfaces | 4.71:1 | 5.64:1 | 3:1 |
+| `text-primary` on `subtle` | 15.41:1 | 15.01:1 | 4.5:1 |
+| `base` on `subtle` | 4.48:1 | 6.08:1 | 3:1 |
+| `strong` on `subtle` | 6.42:1 | 8.96:1 | 4.5:1 |
+
+**Focus.** `color-focus` is `#4C89EF` in both themes — core-fixed, never
+accent-derived (DAB-003). Measured against all three surfaces per theme:
+light 3.28 / 3.42 / 3.14:1, dark 5.78 / 5.23 / 4.42:1 — all above 3:1. The
+ring is 2px outline with 2px offset (DAB-002) and keeps the element's radius.
+
+**Selection.** `color-selection-bg` is `gray-900` in light and `gray-50` in
+dark; `color-selection-fg` is `color-text-inverse` (17.93:1 light,
+17.18:1 dark). Selection is an inverted neutral pair, not an accent tint.
+
+**Rules.**
+
+- Functional colors never carry brand expression, never replace the accent,
+  and are never used as decorative fills.
+- Status always pairs with a non-color cue (§10.5).
+- `on-*` is used only on its own base fill; it is not a general text color.
+- Focus and selection are core-fixed: no site theme may override them, and
+  they do not follow the accent (DAB-003).
+- Site themes cannot override any value in this section.
+
+**Frontmatter on approval.** Functional roles and `color-focus`,
+`color-selection-bg`, `color-selection-fg` join `themes.light` and
+`themes.dark`.
+
+**Deferred:** overlay (DAB-007).
+
+**Rationale.** Fixed role lightness makes light and dark the same hue at
+different lightness, so a status never changes meaning between themes.
+Regenerating the light values too (Owner's choice) removes the success-base
+exception and leaves one derivation for both themes. Every pair clears DAB-002
+with margin: the worst 4.5:1 requirement measures 5.13:1, the worst 3:1
+requirement measures 4.48:1.
+
+**Alternatives considered.** Adopting the retired light values (rejected —
+leaves one exception and two derivation methods); hand-picked dark values
+(rejected — hue drift between themes); reusing light values in dark (rejected —
+contrast collapses); black `on-success` on the retired green (rejected — makes
+the three `on` roles inconsistent).
 
 ---
 
@@ -833,7 +925,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-003` | Color system model | Palette structure; accent strategy; functional set shape | DAB-001, DAB-002 | **Approved (2026-11-06)** — ADR-003 |
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | **Approved (2026-11-06)** — ADR-004 |
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | **Approved (2026-11-06)** — ADR-005 |
-| `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | Open |
+| `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | Proposed (2026-11-06) — §4.7 |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | Open |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Open |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
