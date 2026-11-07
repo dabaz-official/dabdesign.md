@@ -86,11 +86,62 @@ typography:
   # Families — DAB-008 (approved 2026-11-07).
   text-family-sans: 'Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
   text-family-mono: 'ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
+  # Scale — DAB-009 (approved 2026-11-07). Zero tracking on every role.
+  text-display:
+    fontSize: "clamp(2.25rem, 1.5rem + 3vw, 3rem)"
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: 0
+  text-h1:
+    fontSize: "clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem)"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: 0
+  text-h2:
+    fontSize: "1.5rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: 0
+  text-h3:
+    fontSize: "1.25rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: 0
+  text-h4:
+    fontSize: "1.125rem"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: 0
+  text-body-lg:
+    fontSize: "1.125rem"
+    fontWeight: 400
+    lineHeight: 1.7
+    letterSpacing: 0
+  text-body:
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.7
+    letterSpacing: 0
+  text-body-sm:
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: 0
+  text-label:
+    fontSize: "0.875rem"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: 0
+  text-caption:
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: 0
 ---
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-008 ratified; DAB-009 proposed; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-009 ratified; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -154,7 +205,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-008), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-009), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -282,6 +333,7 @@ from retired documents carry no status and are not inherited.
 | ADR-006 | 2026-11-06 | Functional colors and focus/selection: success 150.0°/0.154, warning 85.2°/0.115, danger 24.9°/0.190; light roles base/strong/subtle at L 0.52/0.44/0.95 (C × 0.25), dark at L 0.72/0.82/0.25 (C × 0.35); `on` = white in light, `gray-1000` in dark; focus fixed `#4C89EF` in both themes, never accent-derived, 2px outline + 2px offset; selection is an inverted neutral pair (`gray-900`/white light, `gray-50`/`gray-900` dark); every pair measured — worst 5.13:1 against 4.5:1 and 4.48:1 against 3:1 | Fixed role lightness keeps a status the same hue and meaning across themes; regenerating light values too removes the retired success-base exception and leaves one derivation; focus blue passes 3:1 on all six surfaces (3.14–5.78:1) while reading as a ring, not a border; neutral selection gives 17.9:1 where white-on-blue fails at 3.42:1. Alternatives rejected: adopting retired light values (leaves one exception and two methods), hand-picked dark values (hue drift), reusing light values in dark (contrast collapse), black `on-success` (inconsistent `on` roles), neutral-inversion focus (reads as a border), blue selection (fails 4.5:1) | Accepted (Owner) |
 | ADR-007 | 2026-11-07 | Overlay: one token `color-overlay = rgba(0, 0, 0, 0.50)` in both themes; modal scrim only — dialogs, drawers, command palettes — never for hover/pressed or media backdrops; in dark theme the scrim signals modality only, modal separation must come from `color-border-strong` (or ratified elevation), and opacity is never raised to compensate | 50% is the light-theme floor: 40% measures 2.96:1 while 50% gives 4.12:1 dialog-over-scrim; dark separation is 1.13–1.15:1 at every opacity from 40% to 70%, so a per-theme or stronger value would imply a benefit it cannot deliver. Alternatives rejected: 0.60 in both themes (heavier light theme, no dark gain), per-theme 0.50/0.60 (measured no benefit), a second strong token (no nested scenario yet), split color and opacity tokens (easy to consume only one), media/state use (different requirements; conflicts with §9.2) | Accepted (Owner) |
 | ADR-008 | 2026-11-07 | Typefaces: Latin Inter (SIL OFL 1.1), variable, self-hosted Latin subset, preloaded; CJK and full-width symbols Noto Sans SC (OFL 1.1) with an optional per-site `unicode-range` subset and never the full font; stack `"Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif`; monospace is a system stack with no webfont; self-hosted `woff2` only with `font-display: swap` and no public CDN; targets Inter ≤ 120 KB and any Noto subset ≤ 500 KB; one `text-family-sans` token, no per-site family substitution | Inter plus Noto gives one open-licensed Latin face and a matching CJK face without multi-megabyte CJK downloads; Noto-first fallback renders consistently when a subset ships and degrades to PingFang/YaHei when it does not; self-hosting removes mainland-China CDN unreliability and a third-party origin; `swap` removes invisible text. Alternatives rejected: system-only stack (Latin metrics drift), full Noto webfont (first-load size), Google Fonts/jsDelivr (blocked or slow, extra origin), `sans-serif`-only CJK fallback (browser-dependent), a single bilingual font (size problem on every page) | Accepted (Owner) |
+| ADR-009 | 2026-11-07 | Type scale: 16px base, integer sizes 12/14/16/18/20/24/30/36/48; ten roles from `text-display` (36–48 fluid) to `text-caption` (12); body and below fixed, display and h1 fluid via `clamp()`; weights 400/600 only with synthesis allowed where 600 is unavailable; zero tracking everywhere; sentence case; tabular numerals in tables and metrics | Integer sizes align implementation and design tools; 16px is the smallest comfortable Chinese body size on low-density screens; two weights cover hierarchy without synthesized intermediate weights; zero tracking is the only rule that survives mixed CJK/Latin pages; fixing body sizes protects reading while letting display and h1 scale prevents cramped mobile headlines. Alternatives rejected: 14px base (too small for Chinese body), strict 1.25 ratio (non-integer sizes fight design tools), 400/700 (heavier headings), 400/500/700 (500 synthesizes on YaHei), negative display tracking (tightens Chinese), per-`lang` tracking (silent when the attribute is missing), all-fluid sizes (small text becomes unreadable) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -312,6 +364,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-008 proposed — Inter + Noto Sans SC, self-hosted with swap, optional CJK subset (§5.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-008 ratified — typefaces and loading; `typography` family tokens added | Draft |
 | `0.1.0` | 2026-11-07 | DAB-009 proposed — 16px integer scale, 400/600 weights, zero tracking, fluid display/h1 (§5.5); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-009 ratified — typography domain complete; ten scale tokens added to frontmatter | Draft |
 
 ---
 
@@ -722,8 +775,9 @@ requirements and conflicts with §9.2).
 
 ## 5. Typography — decision area
 
-> **DAB-008 approved (§5.4); DAB-009 proposed (§5.5).** No typography value is
-> a standard until its decision is Approved.
+> **Typography domain complete — DAB-008 and DAB-009 approved (§5.4, §5.5).**
+> No typography value is a standard unless it appears in the frontmatter or in
+> these ratified sections.
 
 ### 5.1 Questions
 
@@ -746,7 +800,7 @@ requirements and conflicts with §9.2).
 | ID | Question | Status |
 |---|---|---|
 | `DAB-008` | Typeface, fallbacks, licensing, loading | Approved — §5.4 |
-| `DAB-009` | Scale, weights, tracking, casing | Proposed — §5.5 |
+| `DAB-009` | Scale, weights, tracking, casing | Approved — §5.5 |
 
 ### 5.4 DAB-008 — Typefaces and loading (approved 2026-11-07)
 
@@ -826,10 +880,10 @@ slow in mainland China, extra origin); `sans-serif` as the only CJK fallback
 (rejected — browser-dependent selection); a single bilingual font (rejected —
 CJK coverage forces the size problem into every page).
 
-### 5.5 Proposed answer — DAB-009 (pending Owner approval)
+### 5.5 DAB-009 — Type scale, weights, tracking, casing (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** No type scale, weight, or tracking value
-> is a standard until the Owner accepts this section.
+> **Status: Approved (Owner, 2026-11-07) — ADR-009.** Token values are in the
+> frontmatter (`typography.text-*`); this section explains intent and usage.
 
 **Scale.** 16px base, integer sizes 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48.
 Body and below are fixed; `display` and `h1` scale fluidly with the viewport.
@@ -1163,7 +1217,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
-| `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Proposed (2026-11-07) — §5.5 |
+| `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
