@@ -53,6 +53,7 @@ themes:
     color-focus: "#4C89EF"
     color-selection-bg: "#171717"
     color-selection-fg: "#FFFFFF"
+    color-overlay: "rgba(0, 0, 0, 0.50)"
   dark:
     color-background: "#0A0A0A"
     color-surface: "#171717"
@@ -80,14 +81,15 @@ themes:
     color-focus: "#4C89EF"
     color-selection-bg: "#FAFAFA"
     color-selection-fg: "#171717"
+    color-overlay: "rgba(0, 0, 0, 0.50)"
 ---
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-006 ratified; DAB-007 proposed; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-007 ratified; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
-**Last updated:** 2026-11-06  
+**Last updated:** 2026-11-07  
 **Applies to:** all DabWave websites — DabAZ (official site), DabMusic, DabSudoku, DabMinesweeper, and future sites  
 **Consumers:** the maintainer (solo developer) and coding agents
 
@@ -148,7 +150,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-006), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-007), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -274,6 +276,7 @@ from retired documents carry no status and are not inherited.
 | ADR-004 | 2026-11-06 | Neutral palette: 13 steps `gray-0`…`gray-1000` — the prior 14-step set minus `gray-150`; values adopted from the retired `design.md` neutral set and frozen in frontmatter; pure neutral (C = 0) on every site, not regenerated with OKLCH; a site theme's surface-tint override is limited to choosing which ratified step serves which surface — a colored tint or new neutral value is a core decision | 13 steps keep the surface/border layering the old set provided while dropping a step that was never load-bearing; adopting existing values keeps every measured ratio and the ramp script's constants valid; pure neutral keeps one shared contrast table instead of one per site. Alternatives rejected: 12- or 10-step (too few dark-theme surface levels), OKLCH C = 0 regeneration (invalidates all measured ratios for no perceptual gain), Radix Gray (12 steps, blue tint, mismatched structure), per-site tint ≤ 0.005 (multiplies validation cost across sites) | Accepted (Owner) |
 | ADR-005 | 2026-11-06 | Semantic roles: three text levels (`primary`/`secondary`/`tertiary`) plus `inverse` and contrast-exempt `disabled`; three surfaces (`background`/`surface`/`surface-secondary`); two borders (`border` decorative, `border-strong` interactive at 3:1); mappings light/dark — `gray-900`/`gray-50`, `gray-700`/`gray-300`, `gray-600`/`gray-400`, `gray-0`/`gray-900`, `gray-400`/`gray-600`, `gray-200`/`gray-800`, `gray-500`/`gray-500`; role names constant across themes and sites; site themes may remap which ratified step serves which surface, never rename roles or invent values; action, status, focus, and selection values deferred to DAB-006 | Three levels per axis match real product hierarchy; tertiary at `gray-600`/`gray-400` is the lightest text clearing 4.5:1 on every ratified surface (worst 6.00:1); `gray-400` fails 1.4.11 as an interactive border at 2.42–2.52:1, so `border-strong` lands on `gray-500` in both themes (worst 3.19:1). Alternatives rejected: two text levels (loses hint/meta distinction), four text levels (no lighter step clears 4.5:1 without colliding with disabled), two surfaces (nested surfaces fall back to borders), `gray-400` border-strong (fails 1.4.11), separate border-strong values (one shared value passes both themes) | Accepted (Owner) |
 | ADR-006 | 2026-11-06 | Functional colors and focus/selection: success 150.0°/0.154, warning 85.2°/0.115, danger 24.9°/0.190; light roles base/strong/subtle at L 0.52/0.44/0.95 (C × 0.25), dark at L 0.72/0.82/0.25 (C × 0.35); `on` = white in light, `gray-1000` in dark; focus fixed `#4C89EF` in both themes, never accent-derived, 2px outline + 2px offset; selection is an inverted neutral pair (`gray-900`/white light, `gray-50`/`gray-900` dark); every pair measured — worst 5.13:1 against 4.5:1 and 4.48:1 against 3:1 | Fixed role lightness keeps a status the same hue and meaning across themes; regenerating light values too removes the retired success-base exception and leaves one derivation; focus blue passes 3:1 on all six surfaces (3.14–5.78:1) while reading as a ring, not a border; neutral selection gives 17.9:1 where white-on-blue fails at 3.42:1. Alternatives rejected: adopting retired light values (leaves one exception and two methods), hand-picked dark values (hue drift), reusing light values in dark (contrast collapse), black `on-success` (inconsistent `on` roles), neutral-inversion focus (reads as a border), blue selection (fails 4.5:1) | Accepted (Owner) |
+| ADR-007 | 2026-11-07 | Overlay: one token `color-overlay = rgba(0, 0, 0, 0.50)` in both themes; modal scrim only — dialogs, drawers, command palettes — never for hover/pressed or media backdrops; in dark theme the scrim signals modality only, modal separation must come from `color-border-strong` (or ratified elevation), and opacity is never raised to compensate | 50% is the light-theme floor: 40% measures 2.96:1 while 50% gives 4.12:1 dialog-over-scrim; dark separation is 1.13–1.15:1 at every opacity from 40% to 70%, so a per-theme or stronger value would imply a benefit it cannot deliver. Alternatives rejected: 0.60 in both themes (heavier light theme, no dark gain), per-theme 0.50/0.60 (measured no benefit), a second strong token (no nested scenario yet), split color and opacity tokens (easy to consume only one), media/state use (different requirements; conflicts with §9.2) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -300,6 +303,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-006 proposed — generated functional palette, fixed focus blue, neutral-inversion selection (§4.7); awaiting approval | Draft |
 | `0.1.0` | 2026-11-06 | DAB-006 ratified — functional values, focus and selection in frontmatter; `scripts/functional-palette.mjs` reproduces them | Draft |
 | `0.1.0` | 2026-11-06 | DAB-007 proposed — single overlay token at 50% black, modal scrim only (§4.8); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-007 ratified — color domain complete (DAB-003…DAB-007); overlay token added to both themes | Draft |
 
 ---
 
@@ -350,9 +354,9 @@ Specification-level changes are listed here; file history lives in git.
 
 ## 4. Color — decision area
 
-> **DAB-003…DAB-006 approved (§4.4…§4.7); DAB-007 proposed (§4.8).** The color
-> domain closes once DAB-007 is ratified. No color value is a standard until
-> its decision is Approved.
+> **Color domain complete — DAB-003…DAB-007 approved (§4.4…§4.8).** No color
+> value is a standard unless it appears in the frontmatter or in one of these
+> ratified sections.
 
 ### 4.1 Questions this area must answer
 
@@ -387,7 +391,7 @@ Specification-level changes are listed here; file history lives in git.
 | `DAB-004` | Neutral palette values | Approved — §4.5 |
 | `DAB-005` | Semantic roles and light/dark mappings | Approved — §4.6 |
 | `DAB-006` | Functional color values, focus and selection treatment | Approved — §4.7 |
-| `DAB-007` | Overlay token and opacity | Proposed — §4.8 |
+| `DAB-007` | Overlay token and opacity | Approved — §4.8 |
 
 ### 4.4 DAB-003 — Color system model (approved 2026-11-06)
 
@@ -667,10 +671,10 @@ leaves one exception and two derivation methods); hand-picked dark values
 contrast collapses); black `on-success` on the retired green (rejected — makes
 the three `on` roles inconsistent).
 
-### 4.8 Proposed answer — DAB-007 (pending Owner approval)
+### 4.8 DAB-007 — Overlay token (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** No component may consume this token
-> until the Owner accepts it.
+> **Status: Approved (Owner, 2026-11-07) — ADR-007.** The value is in the
+> frontmatter (`themes.light.color-overlay`, `themes.dark.color-overlay`).
 
 **Token.** One token, `color-overlay`, with the value `rgba(0, 0, 0, 0.50)` in
 both themes. There is no per-theme variant.
@@ -1000,7 +1004,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-004` | Neutral palette | Ramp size, values, tint | DAB-003 | **Approved (2026-11-06)** — ADR-004 |
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | **Approved (2026-11-06)** — ADR-005 |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
-| `DAB-007` | Overlay | Token and opacity | DAB-005 | Proposed (2026-11-06) — §4.8 |
+| `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Open |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
