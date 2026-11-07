@@ -203,7 +203,7 @@ containers:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-012 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-012 ratified; DAB-013 proposed; no decisions Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -436,6 +436,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-011 ratified — elevation and motion tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-012 proposed — canonical breakpoints, containers, gutters, and 12-column grid carried over (§8.5); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-012 ratified — breakpoint and container tokens added to frontmatter | Draft |
+| `0.1.0` | 2026-11-07 | DAB-013 proposed — eight-component pilot in dependency order, site sequence official → game → music (§9.5); awaiting approval | Draft |
 
 ---
 
@@ -1379,6 +1380,67 @@ radius, shadow), **variants**, **sizes**, **state matrix**, **accessibility**
 - [ ] Frontmatter entry and body specification match.
 - [ ] Accessibility checklist (§10.6) passes.
 
+### 9.5 Proposed answer — DAB-013 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No component is in scope until the Owner
+> accepts this section.
+
+**Pilot set — eight components, in dependency order.**
+
+| # | Component | Depends on |
+|---:|---|---|
+| 1 | Button | Action aliases, focus, control heights, press and disabled states |
+| 2 | Text input | Surfaces, `color-border-strong`, text roles, error state, label typography |
+| 3 | Checkbox / radio / switch | Focus, selected state, non-color cues |
+| 4 | Select | Text input patterns, popup layer, keyboard model |
+| 5 | Card | Surface, border, `radius-lg`, hover lift (§7.4) |
+| 6 | Dialog | `color-overlay`, `shadow-floating`, focus trap, `duration-slow` |
+| 7 | Toast / alert | Functional roles, non-color cues, live-region announcement |
+| 8 | Empty state | Text hierarchy, Button, illustration slot |
+
+A component is promoted only after passing §9.4 Definition of Done in its pilot
+site; the lifecycle in §9.3 applies unchanged.
+
+**Pilot sites, in order.**
+
+1. **DabAZ official site** — the most restrained surface; exercises marketing
+   typography, forms, and card grids at low density.
+2. **DabSudoku or DabMinesweeper** — the densest surface; exercises control
+   states, dialogs, and feedback under pressure.
+3. **DabMusic** — last, because player controls, covers, and media states add
+   the most component-specific surface area.
+
+**Out of the shared layer — owned by the site theme:**
+
+- Hero and marketing section composition
+- Media player controls and cover art treatment
+- Game board, HUD, and game-specific feedback
+- Illustration and imagery
+
+**Deferred, not ratified — wave 2 candidates.** Navigation/header, footer,
+tabs, table, pagination, tooltip, badge, avatar, and skeleton are deliberately
+excluded from the pilot. Navigation and footer differ most across sites and
+would be premature abstraction. Adopting any of them requires a follow-up scope
+decision, not an exception.
+
+**No frontmatter change.** DAB-013 ratifies scope, not token values; component
+entries join the frontmatter only as each component reaches Adopted (§9.3).
+
+**Rationale.** Dependency order minimizes rework: every later component reuses
+the visual and interaction decisions settled by earlier ones. Eight components
+cover forms, containers, feedback, and empty states — the four patterns every
+DabWave site needs — without taking on navigation and footer variance. The
+pilot sequence runs restrained → dense → complex, so failures surface early on
+simple surfaces rather than on DabMusic's player.
+
+**Alternatives considered.** Six components (rejected — leaves checkbox/radio
+and empty states unvalidated); ten including navigation and footer (rejected —
+highest cross-site variance, premature abstraction); usage-frequency order
+(rejected — feedback components would be designed before button states settle);
+parallel pilots (rejected — the same component would churn in two densities at
+once); game-first (rejected — marketing typography and forms would be validated
+last).
+
 ---
 
 ## 10. Accessibility & Interaction
@@ -1524,7 +1586,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | **Approved (2026-11-07)** — ADR-011 |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | **Approved (2026-11-07)** — ADR-012 |
-| `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
+| `DAB-013` | Component scope | Shared-layer pilot set and order | most | Proposed (2026-11-07) — §9.5 |
 
 Working agreement: decisions are taken in roadmap order (dependencies may pull
 one forward with the owner's sign-off). `1.0.0` ships when DAB-001…DAB-013 are
