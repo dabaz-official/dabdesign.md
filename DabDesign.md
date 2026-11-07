@@ -82,11 +82,15 @@ themes:
     color-selection-bg: "#FAFAFA"
     color-selection-fg: "#171717"
     color-overlay: "rgba(0, 0, 0, 0.50)"
+typography:
+  # Families — DAB-008 (approved 2026-11-07).
+  text-family-sans: 'Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
+  text-family-mono: 'ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
 ---
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-007 ratified; DAB-008 proposed; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-008 ratified; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -150,7 +154,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-007), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-008), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -277,6 +281,7 @@ from retired documents carry no status and are not inherited.
 | ADR-005 | 2026-11-06 | Semantic roles: three text levels (`primary`/`secondary`/`tertiary`) plus `inverse` and contrast-exempt `disabled`; three surfaces (`background`/`surface`/`surface-secondary`); two borders (`border` decorative, `border-strong` interactive at 3:1); mappings light/dark — `gray-900`/`gray-50`, `gray-700`/`gray-300`, `gray-600`/`gray-400`, `gray-0`/`gray-900`, `gray-400`/`gray-600`, `gray-200`/`gray-800`, `gray-500`/`gray-500`; role names constant across themes and sites; site themes may remap which ratified step serves which surface, never rename roles or invent values; action, status, focus, and selection values deferred to DAB-006 | Three levels per axis match real product hierarchy; tertiary at `gray-600`/`gray-400` is the lightest text clearing 4.5:1 on every ratified surface (worst 6.00:1); `gray-400` fails 1.4.11 as an interactive border at 2.42–2.52:1, so `border-strong` lands on `gray-500` in both themes (worst 3.19:1). Alternatives rejected: two text levels (loses hint/meta distinction), four text levels (no lighter step clears 4.5:1 without colliding with disabled), two surfaces (nested surfaces fall back to borders), `gray-400` border-strong (fails 1.4.11), separate border-strong values (one shared value passes both themes) | Accepted (Owner) |
 | ADR-006 | 2026-11-06 | Functional colors and focus/selection: success 150.0°/0.154, warning 85.2°/0.115, danger 24.9°/0.190; light roles base/strong/subtle at L 0.52/0.44/0.95 (C × 0.25), dark at L 0.72/0.82/0.25 (C × 0.35); `on` = white in light, `gray-1000` in dark; focus fixed `#4C89EF` in both themes, never accent-derived, 2px outline + 2px offset; selection is an inverted neutral pair (`gray-900`/white light, `gray-50`/`gray-900` dark); every pair measured — worst 5.13:1 against 4.5:1 and 4.48:1 against 3:1 | Fixed role lightness keeps a status the same hue and meaning across themes; regenerating light values too removes the retired success-base exception and leaves one derivation; focus blue passes 3:1 on all six surfaces (3.14–5.78:1) while reading as a ring, not a border; neutral selection gives 17.9:1 where white-on-blue fails at 3.42:1. Alternatives rejected: adopting retired light values (leaves one exception and two methods), hand-picked dark values (hue drift), reusing light values in dark (contrast collapse), black `on-success` (inconsistent `on` roles), neutral-inversion focus (reads as a border), blue selection (fails 4.5:1) | Accepted (Owner) |
 | ADR-007 | 2026-11-07 | Overlay: one token `color-overlay = rgba(0, 0, 0, 0.50)` in both themes; modal scrim only — dialogs, drawers, command palettes — never for hover/pressed or media backdrops; in dark theme the scrim signals modality only, modal separation must come from `color-border-strong` (or ratified elevation), and opacity is never raised to compensate | 50% is the light-theme floor: 40% measures 2.96:1 while 50% gives 4.12:1 dialog-over-scrim; dark separation is 1.13–1.15:1 at every opacity from 40% to 70%, so a per-theme or stronger value would imply a benefit it cannot deliver. Alternatives rejected: 0.60 in both themes (heavier light theme, no dark gain), per-theme 0.50/0.60 (measured no benefit), a second strong token (no nested scenario yet), split color and opacity tokens (easy to consume only one), media/state use (different requirements; conflicts with §9.2) | Accepted (Owner) |
+| ADR-008 | 2026-11-07 | Typefaces: Latin Inter (SIL OFL 1.1), variable, self-hosted Latin subset, preloaded; CJK and full-width symbols Noto Sans SC (OFL 1.1) with an optional per-site `unicode-range` subset and never the full font; stack `"Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif`; monospace is a system stack with no webfont; self-hosted `woff2` only with `font-display: swap` and no public CDN; targets Inter ≤ 120 KB and any Noto subset ≤ 500 KB; one `text-family-sans` token, no per-site family substitution | Inter plus Noto gives one open-licensed Latin face and a matching CJK face without multi-megabyte CJK downloads; Noto-first fallback renders consistently when a subset ships and degrades to PingFang/YaHei when it does not; self-hosting removes mainland-China CDN unreliability and a third-party origin; `swap` removes invisible text. Alternatives rejected: system-only stack (Latin metrics drift), full Noto webfont (first-load size), Google Fonts/jsDelivr (blocked or slow, extra origin), `sans-serif`-only CJK fallback (browser-dependent), a single bilingual font (size problem on every page) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -305,6 +310,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-007 proposed — single overlay token at 50% black, modal scrim only (§4.8); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-007 ratified — color domain complete (DAB-003…DAB-007); overlay token added to both themes | Draft |
 | `0.1.0` | 2026-11-07 | DAB-008 proposed — Inter + Noto Sans SC, self-hosted with swap, optional CJK subset (§5.4); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-008 ratified — typefaces and loading; `typography` family tokens added | Draft |
 
 ---
 
@@ -715,7 +721,7 @@ requirements and conflicts with §9.2).
 
 ## 5. Typography — decision area
 
-> **DAB-008 proposed (§5.4); DAB-009 open.** No typography value is a standard
+> **DAB-008 approved (§5.4); DAB-009 open.** No typography value is a standard
 > until its decision is Approved.
 
 ### 5.1 Questions
@@ -738,13 +744,13 @@ requirements and conflicts with §9.2).
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-008` | Typeface, fallbacks, licensing, loading | Proposed — §5.4 |
+| `DAB-008` | Typeface, fallbacks, licensing, loading | Approved — §5.4 |
 | `DAB-009` | Scale, weights, tracking, casing | Open |
 
-### 5.4 Proposed answer — DAB-008 (pending Owner approval)
+### 5.4 DAB-008 — Typefaces and loading (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** No site or component may set a font
-> family until the Owner accepts this section.
+> **Status: Approved (Owner, 2026-11-07) — ADR-008.** Family values are in the
+> frontmatter (`typography.text-family-sans`, `typography.text-family-mono`).
 
 **Families.**
 
@@ -1085,7 +1091,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | **Approved (2026-11-06)** — ADR-005 |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
-| `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Proposed (2026-11-07) — §5.4 |
+| `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
