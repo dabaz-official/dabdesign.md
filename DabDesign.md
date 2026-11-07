@@ -178,7 +178,7 @@ border:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-010 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-010 ratified; DAB-011 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -405,6 +405,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-009 ratified — typography domain complete; ten scale tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-010 proposed — 4px spacing, 32/40/48 controls, 16/20/24/32 icons, Apple radius ladder, 1px borders (§6.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-010 ratified — spacing, sizing, radius, and border tokens added to frontmatter | Draft |
+| `0.1.0` | 2026-11-07 | DAB-011 proposed — one floating shadow, Apple Store hover geometry, 100/200/300ms durations (§7.4); awaiting approval | Draft |
 
 ---
 
@@ -1104,7 +1105,8 @@ for Apple); 0.5px borders (rejected — inconsistent rendering).
 
 ## 7. Elevation & Motion — decision area
 
-> **Open.** Decision DAB-011 (§13).
+> **DAB-011 proposed (§7.4).** No shadow, duration, or easing value is a
+> standard until its decision is Approved.
 
 ### 7.1 Questions
 
@@ -1123,7 +1125,85 @@ for Apple); 0.5px borders (rejected — inconsistent rendering).
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-011` | Elevation levels and values; motion durations, easing, reduced-motion rules | Open |
+| `DAB-011` | Elevation levels and values; motion durations, easing, reduced-motion rules | Proposed — §7.4 |
+
+### 7.4 Proposed answer — DAB-011 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No shadow, duration, or easing value is a
+> standard until the Owner accepts this section.
+
+**Elevation — flat at rest, one floating level.** Cards, buttons, navigation,
+and every resting surface carry no shadow; layering comes from surface steps and
+`color-border`. Exactly one shadow token exists:
+
+`shadow-floating: 2px 4px 16px rgba(0, 0, 0, 0.16)`
+
+It is used in two places only: the hover lift of an interactive card, and
+floating layers (dialog, popover, dropdown, toast). The geometry is measured
+from the Apple Store card hover (`.rf-ccard-content:hover`,
+`.rf-hcard-content:hover`, `.rf-recommcard-content:hover`):
+`box-shadow: 2px 4px 16px #00000029` with `transform: scale3d(1.01,1.01,1.01)`.
+
+**Dark theme.** Shadows are nearly invisible on `gray-950`; this is the same
+limit recorded in DAB-007. Floating layers must also carry
+`color-border-strong`; the shadow is never the only separation cue.
+
+**Hover lift — interactive cards only.** A card that is clickable across its
+whole surface may lift on hover: `transform: scale(1.01)` plus
+`shadow-floating`. This is the only transform allowed in a resting UI; it is
+forbidden on buttons, inputs, navigation, and non-interactive cards. Apple's
+hover `border-radius: 28px` change is not adopted — radius never animates.
+
+**Motion durations.**
+
+| Token | Value | Use |
+|---|---:|---|
+| `duration-fast` | 100ms | Color, background, border, opacity feedback |
+| `duration-base` | 200ms | Tooltip and dropdown entrance |
+| `duration-slow` | 300ms | Card hover lift, dialog and drawer entrance |
+
+300ms and its easing are measured from the Apple Store hover; 100ms matches the
+same stylesheet's color transitions (`background-color .1s linear`); 200ms is
+the system's middle step, not an Apple measurement.
+
+**Easing.**
+
+| Token | Value | Use |
+|---|---|---|
+| `easing-standard` | `cubic-bezier(0, 0, 0.5, 1)` | Transform, shadow, overlay entrance |
+| `easing-linear` | `linear` | Color-only transitions |
+
+**Animated properties.** Only `transform`, `opacity`, `color`,
+`background-color`, `border-color`, and `box-shadow`. Layout properties —
+`width`, `height`, `top`, `left`, `margin`, `padding` — are never animated.
+There is no infinite decorative animation, no auto-playing motion, and no
+parallax.
+
+**Press state.** Press is a color or border change at `duration-fast`, not a
+scale. Apple's `scale(0.95)` press is deliberately not adopted: a scaled press
+on every control is louder than this system's flat, border-first character.
+
+**Reduced motion.** Under `prefers-reduced-motion: reduce`: transform, scale,
+translate, parallax, and auto-play are disabled entirely; color and opacity
+changes remain at `duration-fast`; `shadow-floating` appears instantly on hover
+and floating layers. Focus visibility is never reduced.
+
+**Frontmatter on approval.** `elevation.shadow-floating`, `motion.duration-*`,
+and `motion.easing-*` join the frontmatter.
+
+**Rationale.** One shadow token keeps the system flat without losing the
+functional separation a floating layer needs. The Apple Store hover is a
+measured, restrained reference: 1% scale and a 16% shadow at 300ms — enough to
+signal interactivity without becoming decoration. Disabling movement while
+keeping color and opacity satisfies reduced-motion without removing state
+feedback.
+
+**Alternatives considered.** No shadows at all (rejected — floating layers lose
+their only depth cue in light theme); three elevation levels (rejected —
+invisible in dark theme and contrary to the flat character); animating radius
+or layout (rejected — layout thrash and the radius scale is fixed); Apple's
+`scale(0.95)` press (rejected — too loud for every control); disabling all
+animation under reduced motion (rejected — loses non-motion state feedback).
 
 ---
 
@@ -1343,7 +1423,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
-| `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
+| `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Proposed (2026-11-07) — §7.4 |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
 | `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
 
