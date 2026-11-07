@@ -90,7 +90,7 @@ typography:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-008 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-008 ratified; DAB-009 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -311,6 +311,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-007 ratified — color domain complete (DAB-003…DAB-007); overlay token added to both themes | Draft |
 | `0.1.0` | 2026-11-07 | DAB-008 proposed — Inter + Noto Sans SC, self-hosted with swap, optional CJK subset (§5.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-008 ratified — typefaces and loading; `typography` family tokens added | Draft |
+| `0.1.0` | 2026-11-07 | DAB-009 proposed — 16px integer scale, 400/600 weights, zero tracking, fluid display/h1 (§5.5); awaiting approval | Draft |
 
 ---
 
@@ -721,8 +722,8 @@ requirements and conflicts with §9.2).
 
 ## 5. Typography — decision area
 
-> **DAB-008 approved (§5.4); DAB-009 open.** No typography value is a standard
-> until its decision is Approved.
+> **DAB-008 approved (§5.4); DAB-009 proposed (§5.5).** No typography value is
+> a standard until its decision is Approved.
 
 ### 5.1 Questions
 
@@ -745,7 +746,7 @@ requirements and conflicts with §9.2).
 | ID | Question | Status |
 |---|---|---|
 | `DAB-008` | Typeface, fallbacks, licensing, loading | Approved — §5.4 |
-| `DAB-009` | Scale, weights, tracking, casing | Open |
+| `DAB-009` | Scale, weights, tracking, casing | Proposed — §5.5 |
 
 ### 5.4 DAB-008 — Typefaces and loading (approved 2026-11-07)
 
@@ -824,6 +825,76 @@ multi-megabyte first load); Google Fonts or jsDelivr (rejected — blocked or
 slow in mainland China, extra origin); `sans-serif` as the only CJK fallback
 (rejected — browser-dependent selection); a single bilingual font (rejected —
 CJK coverage forces the size problem into every page).
+
+### 5.5 Proposed answer — DAB-009 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No type scale, weight, or tracking value
+> is a standard until the Owner accepts this section.
+
+**Scale.** 16px base, integer sizes 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48.
+Body and below are fixed; `display` and `h1` scale fluidly with the viewport.
+
+| Token | Size | Line height | Weight | Behavior |
+|---|---:|---:|---:|---|
+| `text-display` | 36 → 48 | 1.1 | 600 | fluid `clamp()` |
+| `text-h1` | 30 → 36 | 1.2 | 600 | fluid `clamp()` |
+| `text-h2` | 24 | 1.2 | 600 | fixed |
+| `text-h3` | 20 | 1.3 | 600 | fixed |
+| `text-h4` | 18 | 1.4 | 600 | fixed |
+| `text-body-lg` | 18 | 1.7 | 400 | fixed |
+| `text-body` | 16 | 1.7 | 400 | fixed |
+| `text-body-sm` | 14 | 1.6 | 400 | fixed |
+| `text-label` | 14 | 1.4 | 600 | fixed |
+| `text-caption` | 12 | 1.5 | 400 | fixed |
+
+Fluid formulas: `text-display` `clamp(2.25rem, 1.5rem + 3vw, 3rem)`;
+`text-h1` `clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem)`. Hierarchy holds at every
+width: 36 > 30 > 24 > 20 > 18 at the narrow end and 48 > 36 > 24 > 20 > 18 at
+the wide end.
+
+**Weights.** Two only: 400 regular and 600 semibold. There is no 700 token;
+`<strong>` and emphasis use 600. Font synthesis stays enabled — a platform
+without a true 600 (notably Microsoft YaHei) synthesizes it, which is preferred
+over a false hierarchy or a heavier 700.
+
+**Tracking.** Zero everywhere, including headings. Negative tracking on Chinese
+headings tightens characters in a way mixed CJK/Latin pages cannot absorb;
+display polish is not worth a per-language exception (§5.2).
+
+**Casing.** Sentence case for headings, buttons, labels, and navigation. No
+all-caps, no title case. Acronyms and product names keep their own casing.
+
+**Numerals.** Tabular figures (`font-variant-numeric: tabular-nums`) in tables,
+metrics, and aligned numeric columns; proportional figures everywhere else.
+
+**Line height rationale.** 1.7 for body text serves both Latin and CJK without
+a per-script branch; 1.1–1.4 for headings keeps multi-line Chinese headings
+readable at display sizes.
+
+**Frontmatter on approval.**
+
+```yaml
+typography:
+  text-display: { fontSize: "clamp(2.25rem, 1.5rem + 3vw, 3rem)", fontWeight: 600, lineHeight: 1.1, letterSpacing: 0 }
+  text-h1:      { fontSize: "clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem)", fontWeight: 600, lineHeight: 1.2, letterSpacing: 0 }
+  # … one entry per role in the table above
+```
+
+**Rationale.** Integer sizes keep implementation and design tools aligned;
+16px body is the smallest comfortable Chinese body size on low-density
+screens. Two weights cover the hierarchy without relying on synthesized
+intermediates. Zero tracking is the only choice that survives mixed-script
+pages. Fixing body sizes protects reading; letting only display and h1 scale
+prevents cramped mobile headlines without destabilizing text.
+
+**Alternatives considered.** 14px base (rejected — too small for Chinese body
+text on low-density screens); strict 1.25 ratio (rejected — produces 25px and
+31.25px sizes that fight integer design tools); 400/700 (rejected — heavier
+headings, and 700 exists as a token only to be avoided); 400/500/700 (rejected
+— 500 synthesizes on YaHei, making cross-platform hierarchy less consistent);
+negative tracking on display (rejected — tightens Chinese headings); per-`lang`
+tracking (rejected — silently fails when a language attribute is missing); all
+fluid sizes (rejected — small text can shrink below readable sizes).
 
 ---
 
@@ -1092,7 +1163,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
-| `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
+| `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Proposed (2026-11-07) — §5.5 |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
