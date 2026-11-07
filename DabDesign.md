@@ -203,7 +203,7 @@ containers:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-012 ratified; DAB-013 proposed; no decisions Open (§13)  
+**Document status:** Draft — DAB-001…DAB-013 ratified; no Open decisions; awaiting the foundation test page (§12.1)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -267,7 +267,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-012), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — all DAB-001…DAB-013 Approved; they bind every site |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -399,6 +399,7 @@ from retired documents carry no status and are not inherited.
 | ADR-010 | 2026-11-07 | Spacing, sizing, radius, borders: 4px grid with a 2px half-step and 14 steps (carried from canonical `design.md` §7.1); controls 32/40/48 with a 44×44 effective-target rule on touch surfaces; icons 16/20/24/32 with 20 as default; radius follows the Apple ladder 0/5/8/11/18/pill/full at the Owner's request, overriding canonical `design.md` §7.3 (`0/4/6/8/12/16/24/9999`); borders 1px, 2px only for focus or validated selected outlines, no 0.5px; nested surfaces never exceed their container's radius | The 4px grid keeps every dimension derivable with one mental unit; three control heights cover dense, default, and touch use without an ambiguous fourth; Apple's ladder gives a restrained shape grammar (8 for controls, 11 for capsules, 18 for cards, pill only for actions). The radius override is recorded rather than silent, and radius is a shape scale so it need not snap to the spacing grid. Alternatives rejected: 8px grid (loses 4 and 12), 36/44/52 controls (loose desktop), 16/24/32 icons (no 20px default), canonical radius scale (overridden by the explicit Apple request), 0.5px borders (inconsistent rendering) | Accepted (Owner) |
 | ADR-011 | 2026-11-07 | Elevation and motion: flat at rest with one `shadow-floating` token `2px 4px 16px rgba(0, 0, 0, 0.16)`, used only for the hover lift of interactive cards and floating layers; hover lift is `scale(1.01)` plus the shadow, with geometry, 300ms duration, and `cubic-bezier(0, 0, 0.5, 1)` easing measured from the Apple Store card CSS; durations 100/200/300ms, `linear` for color-only transitions; only transform, opacity, color, background, border, and shadow animate; press is a color change, not a scale; reduced motion disables transform/scale/parallax/auto-play while keeping color and opacity | One shadow keeps the system flat without losing functional depth for floating layers; the Apple Store hover is measured and restrained (1% scale, 16% shadow, 300ms); animating layout or radius would fight the fixed scales; disabling only movement under reduced motion preserves state feedback. Alternatives rejected: no shadows at all (floating layers lose their only depth cue in light theme), three elevation levels (invisible in dark and contrary to the flat character), animating radius or layout (thrash, fixed scale), Apple's `scale(0.95)` press (too loud for every control), disabling all animation under reduced motion (loses non-motion state feedback) | Accepted (Owner) |
 | ADR-012 | 2026-11-07 | Layout: mobile-first breakpoints 640/768/1024/1280/1536 as minimum widths; containers 640/768/1024/1200/1280/fluid with `container-xl` (1200) as default; gutters `space-4`/`space-6`/`space-8` (16/24/32) by viewport band; a 12-column grid available for wide compositions with 24/16 gaps and cards reflowing by minimum usable width; all values carried unchanged from canonical `design.md` §8.2–8.4 | Mobile-first is already approved in canonical `design.md` §8.1, matches the min-width breakpoint definitions, keeps overrides additive, and forces content priority at the 375px validation width; the canonical values already match this spec's validation set and 4px spacing scale, so reusing them avoids a second layout vocabulary. Alternatives rejected: three breakpoints only (drops the 640 and 1536 review widths), a single 1200px container (reading and dashboard layouts need different caps), a 1440px maximum (conflicts with the canonical 1280 cap), an 8-column grid (12 supports both 3- and 4-up), fixed desktop columns on mobile (cards must reflow) | Accepted (Owner) |
+| ADR-013 | 2026-11-07 | Component scope: an eight-component shared-layer pilot in dependency order — Button, Text input, Checkbox/radio/switch, Select, Card, Dialog, Toast/alert, Empty state; pilot sites in order DabAZ official site → a game (DabSudoku or DabMinesweeper) → DabMusic; hero/marketing composition, player controls, game board/HUD, and illustration stay in the site theme layer; navigation, footer, tabs, table, pagination, tooltip, badge, avatar, and skeleton are deferred to a follow-up scope decision; no frontmatter change because scope is not a token decision | Dependency order minimizes rework; the eight cover forms, containers, feedback, and empty states — the four patterns every site needs — without taking on navigation and footer variance; running restrained → dense → complex surfaces surfaces failures early, before DabMusic's player. Alternatives rejected: six components (leaves checkbox/radio and empty states unvalidated), ten including navigation and footer (premature abstraction), usage-frequency order (feedback designed before button states settle), parallel pilots (same component churns in two densities), game-first (marketing typography and forms validated last) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -437,6 +438,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-012 proposed — canonical breakpoints, containers, gutters, and 12-column grid carried over (§8.5); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-012 ratified — breakpoint and container tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-013 proposed — eight-component pilot in dependency order, site sequence official → game → music (§9.5); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-013 ratified — all thirteen decisions approved; specification awaits the foundation test page for 1.0.0 | Draft |
 
 ---
 
@@ -1380,10 +1382,10 @@ radius, shadow), **variants**, **sizes**, **state matrix**, **accessibility**
 - [ ] Frontmatter entry and body specification match.
 - [ ] Accessibility checklist (§10.6) passes.
 
-### 9.5 Proposed answer — DAB-013 (pending Owner approval)
+### 9.5 DAB-013 — Component scope (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** No component is in scope until the Owner
-> accepts this section.
+> **Status: Approved (Owner, 2026-11-07) — ADR-013.** This section fixes scope
+> and order only; component specifications land as each reaches Adopted (§9.3).
 
 **Pilot set — eight components, in dependency order.**
 
@@ -1586,11 +1588,11 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | **Approved (2026-11-07)** — ADR-011 |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | **Approved (2026-11-07)** — ADR-012 |
-| `DAB-013` | Component scope | Shared-layer pilot set and order | most | Proposed (2026-11-07) — §9.5 |
+| `DAB-013` | Component scope | Shared-layer pilot set and order | most | **Approved (2026-11-07)** — ADR-013 |
 
 Working agreement: decisions are taken in roadmap order (dependencies may pull
-one forward with the owner's sign-off). `1.0.0` ships when DAB-001…DAB-013 are
-Approved and the foundation test page (§12.1) passes.
+one forward with the owner's sign-off). All thirteen decisions are now
+Approved; `1.0.0` ships when the foundation test page (§12.1) passes.
 
 ---
 
