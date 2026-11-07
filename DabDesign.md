@@ -86,7 +86,7 @@ themes:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-007 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-007 ratified; DAB-008 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -304,6 +304,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-06 | DAB-006 ratified — functional values, focus and selection in frontmatter; `scripts/functional-palette.mjs` reproduces them | Draft |
 | `0.1.0` | 2026-11-06 | DAB-007 proposed — single overlay token at 50% black, modal scrim only (§4.8); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-007 ratified — color domain complete (DAB-003…DAB-007); overlay token added to both themes | Draft |
+| `0.1.0` | 2026-11-07 | DAB-008 proposed — Inter + Noto Sans SC, self-hosted with swap, optional CJK subset (§5.4); awaiting approval | Draft |
 
 ---
 
@@ -714,7 +715,8 @@ requirements and conflicts with §9.2).
 
 ## 5. Typography — decision area
 
-> **Open.** Decisions DAB-008, DAB-009 (§13).
+> **DAB-008 proposed (§5.4); DAB-009 open.** No typography value is a standard
+> until its decision is Approved.
 
 ### 5.1 Questions
 
@@ -736,8 +738,86 @@ requirements and conflicts with §9.2).
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-008` | Typeface, fallbacks, licensing, loading | Open |
+| `DAB-008` | Typeface, fallbacks, licensing, loading | Proposed — §5.4 |
 | `DAB-009` | Scale, weights, tracking, casing | Open |
+
+### 5.4 Proposed answer — DAB-008 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No site or component may set a font
+> family until the Owner accepts this section.
+
+**Families.**
+
+| Role | Family | License | Notes |
+|---|---|---|---|
+| Latin | Inter | SIL OFL 1.1 | Variable weight axis; self-hosted subset |
+| CJK and full-width symbols | Noto Sans SC | SIL OFL 1.1 | Optional per-site subset; never the full font |
+| Monospace | system stack | — | No webfont; for code and tabular numerals only |
+
+**Stack.**
+
+```
+"Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif
+```
+
+Latin glyphs resolve in Inter; CJK and full-width glyphs fall through to Noto
+Sans SC, then to the platform's best CJK face. Noto is first in the CJK chain
+so a shipped subset renders identically everywhere; when a site ships no
+subset, the stack degrades to PingFang SC (macOS) or Microsoft YaHei (Windows)
+without any blank state.
+
+**Licensing.** Both families are SIL OFL 1.1. Self-hosting requires shipping
+the license file and preserving copyright notices; subset builds follow any
+reserved-font-name terms in the license. Fonts are never fetched from or
+hot-linked to a third-party host.
+
+**Loading.**
+
+- Self-hosted `woff2` only. No public CDN — Google Fonts is unreliable in
+  mainland China and adds a blocking third-party origin.
+- `font-display: swap` on every `@font-face`; text is never invisible while a
+  font loads.
+- Inter ships as one variable `woff2` with a Latin subset and is the only
+  preloaded font file.
+- A Noto Sans SC subset is optional per site. If shipped, it is self-hosted and
+  split with `unicode-range` so a page downloads only the slices it renders.
+  The full CJK font (several MB) is never shipped.
+- Targets, not gates: Inter Latin subset ≤ 120 KB; any Noto subset ≤ 500 KB in
+  total. Exceeding a target requires a recorded reason in the site theme
+  document.
+
+**Rules.**
+
+- There is exactly one sans stack. It is exported as `text-family-sans`;
+  components never declare `font-family` themselves.
+- A site theme may not substitute another family. The stack is core-fixed.
+- Latency-sensitive sites may tune fallback metrics (`size-adjust`,
+  `ascent-override`) locally; those values are implementation, not core tokens.
+- Emoji resolve through the platform emoji font. Icons are not emoji and are
+  not covered by this decision.
+
+**Frontmatter on approval.**
+
+```yaml
+typography:
+  text-family-sans: 'Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
+  text-family-mono: 'ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
+```
+
+**Deferred:** type scale, weights, tracking, and casing (DAB-009).
+
+**Rationale.** Inter gives one consistent, open-licensed Latin face with a
+small variable subset; Noto Sans SC gives a matching open CJK face that can be
+shipped in slices or skipped entirely, and the system fallbacks guarantee
+Chinese text renders on every platform. Self-hosting removes CDN unreliability
+and a third-party failure mode; `swap` removes invisible-text risk.
+
+**Alternatives considered.** System-only stack (rejected — Latin metrics drift
+between Windows, macOS, and Linux); Noto Sans SC as a full webfont (rejected —
+multi-megabyte first load); Google Fonts or jsDelivr (rejected — blocked or
+slow in mainland China, extra origin); `sans-serif` as the only CJK fallback
+(rejected — browser-dependent selection); a single bilingual font (rejected —
+CJK coverage forces the size problem into every page).
 
 ---
 
@@ -1005,7 +1085,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-005` | Semantic roles | Role set; light/dark mappings | DAB-003, DAB-004 | **Approved (2026-11-06)** — ADR-005 |
 | `DAB-006` | Functional colors | Status colors, focus, selection values | DAB-003, DAB-005 | **Approved (2026-11-06)** — ADR-006 |
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
-| `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Open |
+| `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | Proposed (2026-11-07) — §5.4 |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | Open |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
