@@ -188,7 +188,7 @@ motion:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-011 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-011 ratified; DAB-012 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -418,6 +418,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-010 ratified — spacing, sizing, radius, and border tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-011 proposed — one floating shadow, Apple Store hover geometry, 100/200/300ms durations (§7.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-011 ratified — elevation and motion tokens added to frontmatter | Draft |
+| `0.1.0` | 2026-11-07 | DAB-012 proposed — canonical breakpoints, containers, gutters, and 12-column grid carried over (§8.5); awaiting approval | Draft |
 
 ---
 
@@ -1222,7 +1223,8 @@ animation under reduced motion (rejected — loses non-motion state feedback).
 
 ## 8. Layout & Responsive Behavior — decision area
 
-> **Open.** Decision DAB-012 (§13).
+> **DAB-012 proposed (§8.5).** No breakpoint, container, gutter, or grid value
+> is a standard until its decision is Approved.
 
 ### 8.1 Questions
 
@@ -1246,7 +1248,70 @@ every width.
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-012` | Breakpoints, containers, gutters, grid defaults | Open |
+| `DAB-012` | Breakpoints, containers, gutters, grid defaults | Proposed — §8.5 |
+
+### 8.5 Proposed answer — DAB-012 (pending Owner approval)
+
+> **Status: Proposed, not approved.** These values are carried from the
+> canonical `design.md` §8, where they are already approved defaults; ratifying
+> them here gives the DabWave specification its own binding record.
+
+**Breakpoints** — minimum viewport widths, mobile-first:
+
+| Token | Min width | Use |
+|---|---:|---|
+| `breakpoint-sm` | 640px | Large phones, compact two-column layouts |
+| `breakpoint-md` | 768px | Tablets, wider content |
+| `breakpoint-lg` | 1024px | Desktop navigation, multi-column |
+| `breakpoint-xl` | 1280px | Wide desktop |
+| `breakpoint-2xl` | 1536px | Very wide screens, restrained expansion |
+
+**Containers** — `width: 100%` plus `max-width` and auto inline margins:
+
+| Token | Max width | Use |
+|---|---:|---|
+| `container-sm` | 640px | Narrow forms, focused reading |
+| `container-md` | 768px | Articles, single-column content |
+| `container-lg` | 1024px | Standard product pages, modest grids |
+| `container-xl` | 1200px | Default wide application and marketing content |
+| `container-2xl` | 1280px | Broad dashboards, spacious multi-column |
+| `container-fluid` | 100% | Edge-to-edge layouts |
+
+`container-xl` (1200px) is the default maximum. Text-heavy content stays at a
+60–75 character measure rather than filling the container.
+
+**Gutters.** Below `640` → `space-4` (16); `640`–`1023` → `space-6` (24);
+`1024` and above → `space-8` (32). Gutters are inner padding on the container,
+never a second page-level padding layer.
+
+**Grid.** A 12-column grid is available for broad desktop compositions; it is
+not imposed on every page. `space-6` (24) is the default desktop gap,
+`space-4` (16) on narrow screens. Cards reflow by minimum usable width, not by
+fixed desktop column counts. Full-bleed backgrounds may extend past the
+container while their content stays aligned to it.
+
+**Breakpoint discipline.** Breakpoints are applied when content needs them, not
+merely to change styles at each step. The validation widths in §8.3 (375, 390,
+640, 768, 1024, 1280, 1536) are unchanged and remain the review set.
+
+**No conflict with the canonical document.** Every value above matches
+`design.md` §8.2–§8.4; nothing is overridden.
+
+**Frontmatter on approval.** `breakpoints` and `containers` groups; gutters and
+grid gaps reference existing `space-*` tokens and add no new values.
+
+**Rationale.** The canonical defaults already match this specification's
+validation widths and its 4px spacing scale, so reusing them avoids a second
+layout vocabulary. Mobile-first, content-driven breakpoints keep the system
+small without constraining composition.
+
+**Alternatives considered.** Three breakpoints only, 768/1024/1280 (rejected —
+drops the 640 and 1536 review widths); a single 1200px container (rejected —
+reading layouts and dashboards need different caps); a 1440px maximum
+(rejected — conflicts with the canonical 1280 cap and the 1536 review width);
+an 8-column grid (rejected — 12 accommodates both 3-up and 4-up card rows);
+fixed desktop column counts on mobile (rejected — cards must reflow by usable
+width).
 
 ---
 
@@ -1437,7 +1502,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | **Approved (2026-11-07)** — ADR-011 |
-| `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
+| `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Proposed (2026-11-07) — §8.5 |
 | `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
 
 Working agreement: decisions are taken in roadmap order (dependencies may pull
