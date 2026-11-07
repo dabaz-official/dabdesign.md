@@ -184,11 +184,26 @@ motion:
   duration-slow: 300ms
   easing-standard: "cubic-bezier(0, 0, 0.5, 1)"
   easing-linear: "linear"
+breakpoints:
+  # Breakpoints — DAB-012 (approved 2026-11-07). Minimum widths, mobile-first.
+  breakpoint-sm: 640px
+  breakpoint-md: 768px
+  breakpoint-lg: 1024px
+  breakpoint-xl: 1280px
+  breakpoint-2xl: 1536px
+containers:
+  # Containers — DAB-012 (approved 2026-11-07). container-xl is the default.
+  container-sm: 640px
+  container-md: 768px
+  container-lg: 1024px
+  container-xl: 1200px
+  container-2xl: 1280px
+  container-fluid: 100%
 ---
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-011 ratified; DAB-012 proposed; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-012 ratified; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -252,7 +267,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-011), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-012), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -383,6 +398,7 @@ from retired documents carry no status and are not inherited.
 | ADR-009 | 2026-11-07 | Type scale: 16px base, integer sizes 12/14/16/18/20/24/30/36/48; ten roles from `text-display` (36–48 fluid) to `text-caption` (12); body and below fixed, display and h1 fluid via `clamp()`; weights 400/600 only with synthesis allowed where 600 is unavailable; zero tracking everywhere; sentence case; tabular numerals in tables and metrics | Integer sizes align implementation and design tools; 16px is the smallest comfortable Chinese body size on low-density screens; two weights cover hierarchy without synthesized intermediate weights; zero tracking is the only rule that survives mixed CJK/Latin pages; fixing body sizes protects reading while letting display and h1 scale prevents cramped mobile headlines. Alternatives rejected: 14px base (too small for Chinese body), strict 1.25 ratio (non-integer sizes fight design tools), 400/700 (heavier headings), 400/500/700 (500 synthesizes on YaHei), negative display tracking (tightens Chinese), per-`lang` tracking (silent when the attribute is missing), all-fluid sizes (small text becomes unreadable) | Accepted (Owner) |
 | ADR-010 | 2026-11-07 | Spacing, sizing, radius, borders: 4px grid with a 2px half-step and 14 steps (carried from canonical `design.md` §7.1); controls 32/40/48 with a 44×44 effective-target rule on touch surfaces; icons 16/20/24/32 with 20 as default; radius follows the Apple ladder 0/5/8/11/18/pill/full at the Owner's request, overriding canonical `design.md` §7.3 (`0/4/6/8/12/16/24/9999`); borders 1px, 2px only for focus or validated selected outlines, no 0.5px; nested surfaces never exceed their container's radius | The 4px grid keeps every dimension derivable with one mental unit; three control heights cover dense, default, and touch use without an ambiguous fourth; Apple's ladder gives a restrained shape grammar (8 for controls, 11 for capsules, 18 for cards, pill only for actions). The radius override is recorded rather than silent, and radius is a shape scale so it need not snap to the spacing grid. Alternatives rejected: 8px grid (loses 4 and 12), 36/44/52 controls (loose desktop), 16/24/32 icons (no 20px default), canonical radius scale (overridden by the explicit Apple request), 0.5px borders (inconsistent rendering) | Accepted (Owner) |
 | ADR-011 | 2026-11-07 | Elevation and motion: flat at rest with one `shadow-floating` token `2px 4px 16px rgba(0, 0, 0, 0.16)`, used only for the hover lift of interactive cards and floating layers; hover lift is `scale(1.01)` plus the shadow, with geometry, 300ms duration, and `cubic-bezier(0, 0, 0.5, 1)` easing measured from the Apple Store card CSS; durations 100/200/300ms, `linear` for color-only transitions; only transform, opacity, color, background, border, and shadow animate; press is a color change, not a scale; reduced motion disables transform/scale/parallax/auto-play while keeping color and opacity | One shadow keeps the system flat without losing functional depth for floating layers; the Apple Store hover is measured and restrained (1% scale, 16% shadow, 300ms); animating layout or radius would fight the fixed scales; disabling only movement under reduced motion preserves state feedback. Alternatives rejected: no shadows at all (floating layers lose their only depth cue in light theme), three elevation levels (invisible in dark and contrary to the flat character), animating radius or layout (thrash, fixed scale), Apple's `scale(0.95)` press (too loud for every control), disabling all animation under reduced motion (loses non-motion state feedback) | Accepted (Owner) |
+| ADR-012 | 2026-11-07 | Layout: mobile-first breakpoints 640/768/1024/1280/1536 as minimum widths; containers 640/768/1024/1200/1280/fluid with `container-xl` (1200) as default; gutters `space-4`/`space-6`/`space-8` (16/24/32) by viewport band; a 12-column grid available for wide compositions with 24/16 gaps and cards reflowing by minimum usable width; all values carried unchanged from canonical `design.md` §8.2–8.4 | Mobile-first is already approved in canonical `design.md` §8.1, matches the min-width breakpoint definitions, keeps overrides additive, and forces content priority at the 375px validation width; the canonical values already match this spec's validation set and 4px spacing scale, so reusing them avoids a second layout vocabulary. Alternatives rejected: three breakpoints only (drops the 640 and 1536 review widths), a single 1200px container (reading and dashboard layouts need different caps), a 1440px maximum (conflicts with the canonical 1280 cap), an 8-column grid (12 supports both 3- and 4-up), fixed desktop columns on mobile (cards must reflow) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -419,6 +435,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-011 proposed — one floating shadow, Apple Store hover geometry, 100/200/300ms durations (§7.4); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-011 ratified — elevation and motion tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-012 proposed — canonical breakpoints, containers, gutters, and 12-column grid carried over (§8.5); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-012 ratified — breakpoint and container tokens added to frontmatter | Draft |
 
 ---
 
@@ -1223,8 +1240,8 @@ animation under reduced motion (rejected — loses non-motion state feedback).
 
 ## 8. Layout & Responsive Behavior — decision area
 
-> **DAB-012 proposed (§8.5).** No breakpoint, container, gutter, or grid value
-> is a standard until its decision is Approved.
+> **Layout domain complete — DAB-012 approved (§8.5).** Values live in the
+> frontmatter (`breakpoints`, `containers` groups).
 
 ### 8.1 Questions
 
@@ -1248,13 +1265,14 @@ every width.
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-012` | Breakpoints, containers, gutters, grid defaults | Proposed — §8.5 |
+| `DAB-012` | Breakpoints, containers, gutters, grid defaults | Approved — §8.5 |
 
-### 8.5 Proposed answer — DAB-012 (pending Owner approval)
+### 8.5 DAB-012 — Layout (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** These values are carried from the
-> canonical `design.md` §8, where they are already approved defaults; ratifying
-> them here gives the DabWave specification its own binding record.
+> **Status: Approved (Owner, 2026-11-07) — ADR-012.** These values are carried
+> from the canonical `design.md` §8, where they were already approved defaults;
+> this section gives DabWave its own binding record. Values are in the
+> frontmatter (`breakpoints`, `containers`).
 
 **Breakpoints** — minimum viewport widths, mobile-first:
 
@@ -1312,6 +1330,9 @@ reading layouts and dashboards need different caps); a 1440px maximum
 an 8-column grid (rejected — 12 accommodates both 3-up and 4-up card rows);
 fixed desktop column counts on mobile (rejected — cards must reflow by usable
 width).
+
+**Ratification.** Approved by the Owner on 2026-11-07 after an explicit check
+that mobile-first was the intended authoring direction.
 
 ---
 
@@ -1502,7 +1523,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
 | `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | **Approved (2026-11-07)** — ADR-011 |
-| `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Proposed (2026-11-07) — §8.5 |
+| `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | **Approved (2026-11-07)** — ADR-012 |
 | `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
 
 Working agreement: decisions are taken in roadmap order (dependencies may pull
