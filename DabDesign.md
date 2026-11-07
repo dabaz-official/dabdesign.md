@@ -141,7 +141,7 @@ typography:
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-009 ratified; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-009 ratified; DAB-010 proposed; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -365,6 +365,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-008 ratified — typefaces and loading; `typography` family tokens added | Draft |
 | `0.1.0` | 2026-11-07 | DAB-009 proposed — 16px integer scale, 400/600 weights, zero tracking, fluid display/h1 (§5.5); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-009 ratified — typography domain complete; ten scale tokens added to frontmatter | Draft |
+| `0.1.0` | 2026-11-07 | DAB-010 proposed — 4px spacing, 32/40/48 controls, 16/20/24/32 icons, Apple radius ladder, 1px borders (§6.4); awaiting approval | Draft |
 
 ---
 
@@ -954,7 +955,8 @@ fluid sizes (rejected — small text can shrink below readable sizes).
 
 ## 6. Spacing, Sizing, Radius & Borders — decision area
 
-> **Open.** Decision DAB-010 (§13).
+> **DAB-010 proposed (§6.4).** No spacing, sizing, radius, or border value is
+> a standard until its decision is Approved.
 
 ### 6.1 Questions
 
@@ -974,7 +976,88 @@ fluid sizes (rejected — small text can shrink below readable sizes).
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-010` | Spacing scale, control heights, icon sizes, radius scale, border rules | Open |
+| `DAB-010` | Spacing scale, control heights, icon sizes, radius scale, border rules | Proposed — §6.4 |
+
+### 6.4 Proposed answer — DAB-010 (pending Owner approval)
+
+> **Status: Proposed, not approved.** No spacing, sizing, radius, or border
+> value is a standard until the Owner accepts this section.
+
+**Spacing — 4px grid.** Fourteen steps; the scale is carried from the canonical
+`design.md` §7.1, which is already 4px-based, with a 2px half-step for fine
+optical alignment.
+
+| Token | Value | Typical use |
+|---|---:|---|
+| `space-0` | 0 | Reset |
+| `space-0-5` | 2 | Fine alignment, icon nudges |
+| `space-1` | 4 | Tight inline gaps |
+| `space-2` | 8 | Compact control gaps, label spacing |
+| `space-3` | 12 | Compact padding |
+| `space-4` | 16 | Default small padding, layout gaps |
+| `space-5` | 20 | Intermediate component spacing |
+| `space-6` | 24 | Standard card padding |
+| `space-8` | 32 | Large component gaps |
+| `space-10` | 40 | Section separation |
+| `space-12` | 48 | Large section separation |
+| `space-16` | 64 | Page-level rhythm |
+| `space-20` | 80 | Large page sections |
+| `space-24` | 96 | Hero separation |
+
+Usage ranges: compact control padding 8–12, standard control padding 12–16,
+card padding 16–24, section gaps 32–64, page rhythm 64–96. No free values.
+
+**Control heights.** `control-height-sm` 32, `control-height-md` 40,
+`control-height-lg` 48. `md` is the default visual size, not a touch claim: on
+touch surfaces a control must reach a 44×44 effective target (§10.4) — either
+use `lg`, or provide the missing hit area through spacing so the target, not
+just the artwork, measures at least 44×44.
+
+**Icon sizes.** `size-icon-sm` 16, `size-icon-md` 20 (default), `size-icon-lg`
+24, `size-icon-xl` 32. Icon artwork is never the hit target.
+
+**Radius — Apple ladder.** Adopted from the Apple reference at the Owner's
+explicit request. Radius is a shape scale, not a spacing scale, so these values
+are intentionally not multiples of 4.
+
+| Token | Value | Use |
+|---|---:|---|
+| `radius-none` | 0 | Full-bleed sections, deliberate square edges |
+| `radius-xs` | 5 | Compact inline chips (rare) |
+| `radius-sm` | 8 | Default controls — buttons, inputs, selects |
+| `radius-md` | 11 | Capsules, secondary chips, soft buttons |
+| `radius-lg` | 18 | Cards, panels, popovers, inline imagery |
+| `radius-pill` | 9999px | Primary CTAs and search — intentional, never default |
+| `radius-full` | 50% | Circular icon buttons and avatars |
+
+Nested surfaces never take a larger radius than their container. `radius-pill`
+is a deliberate action signal, not a default for every button or card.
+
+**Borders.** Default width 1px, color from `color-border` or
+`color-border-strong`. 2px is reserved for the focus outline (DAB-002) and for
+selected outlines where validation shows a real need. No 0.5px borders — device
+pixel snapping makes them inconsistent across displays.
+
+**Conflict with the canonical document.** This section takes precedence over
+the canonical `design.md` §7.3 radius scale (`0/4/6/8/12/16/24/9999`) because
+the Owner explicitly asked for the Apple ladder; §7.2's `size-icon-xs` 12 and
+`control-height-xl` 56 are not carried forward. The spacing scale follows
+`design.md` §7.1 unchanged.
+
+**Frontmatter on approval.** Values join `spacing`, `sizing`, `radius`, and
+`border` groups.
+
+**Rationale.** A 4px grid keeps every component dimension derivable with one
+mental unit. Three control heights cover dense, default, and touch use without
+an ambiguous fourth option. Apple's radius ladder gives the system a
+recognizable, restrained shape grammar: 8 for controls, 11 for capsules, 18 for
+cards, pill only for actions.
+
+**Alternatives considered.** 8px grid (rejected — loses 4 and 12, which compact
+controls need); 36/44/52 control heights (rejected — desktop controls read
+loose); 16/24/32 icons (rejected — 24 crowds a 32px control and has no 20px
+default); the canonical `design.md` radius scale (overridden — the Owner asked
+for Apple); 0.5px borders (rejected — inconsistent rendering).
 
 ---
 
@@ -1218,7 +1301,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
-| `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Open |
+| `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Proposed (2026-11-07) — §6.4 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
 | `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
