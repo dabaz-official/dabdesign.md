@@ -137,11 +137,48 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: 0
+spacing:
+  # Spacing — DAB-010 (approved 2026-11-07). 4px grid with a 2px half-step.
+  space-0: 0px
+  space-0-5: 2px
+  space-1: 4px
+  space-2: 8px
+  space-3: 12px
+  space-4: 16px
+  space-5: 20px
+  space-6: 24px
+  space-8: 32px
+  space-10: 40px
+  space-12: 48px
+  space-16: 64px
+  space-20: 80px
+  space-24: 96px
+sizing:
+  # Sizing — DAB-010 (approved 2026-11-07).
+  size-icon-sm: 16px
+  size-icon-md: 20px
+  size-icon-lg: 24px
+  size-icon-xl: 32px
+  control-height-sm: 32px
+  control-height-md: 40px
+  control-height-lg: 48px
+radius:
+  # Radius — DAB-010 (approved 2026-11-07). Apple ladder, Owner request.
+  radius-none: 0px
+  radius-xs: 5px
+  radius-sm: 8px
+  radius-md: 11px
+  radius-lg: 18px
+  radius-pill: 9999px
+  radius-full: 50%
+border:
+  # Borders — DAB-010 (approved 2026-11-07).
+  border-width: 1px
 ---
 
 # DabWave Design System — Specification
 
-**Document status:** Draft — DAB-001…DAB-009 ratified; DAB-010 proposed; the rest Open (§13)  
+**Document status:** Draft — DAB-001…DAB-010 ratified; the rest Open (§13)  
 **Spec version:** 0.1.0  
 **Owner:** DabAZ  
 **Last updated:** 2026-11-07  
@@ -205,7 +242,7 @@ and ambiguity is treated as a defect (§2.3).
 | Kind | Contents | Where |
 |---|---|---|
 | **Framework** (process law) | Governance, RFC and versioning, token discipline, component lifecycle and states, accessibility checklist, content and i18n rules, quality gates | §2, §3, §9, §10, §11, §12 |
-| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-009), Open otherwise |
+| **Design decisions** | System architecture, theming model, color, typography, space, motion, layout, component scope, accessibility target | §13 roadmap — binding once Approved (DAB-001…DAB-010), Open otherwise |
 
 Framework sections define *how decisions are made and enforced*. They do not
 presuppose their outcomes.
@@ -334,6 +371,7 @@ from retired documents carry no status and are not inherited.
 | ADR-007 | 2026-11-07 | Overlay: one token `color-overlay = rgba(0, 0, 0, 0.50)` in both themes; modal scrim only — dialogs, drawers, command palettes — never for hover/pressed or media backdrops; in dark theme the scrim signals modality only, modal separation must come from `color-border-strong` (or ratified elevation), and opacity is never raised to compensate | 50% is the light-theme floor: 40% measures 2.96:1 while 50% gives 4.12:1 dialog-over-scrim; dark separation is 1.13–1.15:1 at every opacity from 40% to 70%, so a per-theme or stronger value would imply a benefit it cannot deliver. Alternatives rejected: 0.60 in both themes (heavier light theme, no dark gain), per-theme 0.50/0.60 (measured no benefit), a second strong token (no nested scenario yet), split color and opacity tokens (easy to consume only one), media/state use (different requirements; conflicts with §9.2) | Accepted (Owner) |
 | ADR-008 | 2026-11-07 | Typefaces: Latin Inter (SIL OFL 1.1), variable, self-hosted Latin subset, preloaded; CJK and full-width symbols Noto Sans SC (OFL 1.1) with an optional per-site `unicode-range` subset and never the full font; stack `"Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif`; monospace is a system stack with no webfont; self-hosted `woff2` only with `font-display: swap` and no public CDN; targets Inter ≤ 120 KB and any Noto subset ≤ 500 KB; one `text-family-sans` token, no per-site family substitution | Inter plus Noto gives one open-licensed Latin face and a matching CJK face without multi-megabyte CJK downloads; Noto-first fallback renders consistently when a subset ships and degrades to PingFang/YaHei when it does not; self-hosting removes mainland-China CDN unreliability and a third-party origin; `swap` removes invisible text. Alternatives rejected: system-only stack (Latin metrics drift), full Noto webfont (first-load size), Google Fonts/jsDelivr (blocked or slow, extra origin), `sans-serif`-only CJK fallback (browser-dependent), a single bilingual font (size problem on every page) | Accepted (Owner) |
 | ADR-009 | 2026-11-07 | Type scale: 16px base, integer sizes 12/14/16/18/20/24/30/36/48; ten roles from `text-display` (36–48 fluid) to `text-caption` (12); body and below fixed, display and h1 fluid via `clamp()`; weights 400/600 only with synthesis allowed where 600 is unavailable; zero tracking everywhere; sentence case; tabular numerals in tables and metrics | Integer sizes align implementation and design tools; 16px is the smallest comfortable Chinese body size on low-density screens; two weights cover hierarchy without synthesized intermediate weights; zero tracking is the only rule that survives mixed CJK/Latin pages; fixing body sizes protects reading while letting display and h1 scale prevents cramped mobile headlines. Alternatives rejected: 14px base (too small for Chinese body), strict 1.25 ratio (non-integer sizes fight design tools), 400/700 (heavier headings), 400/500/700 (500 synthesizes on YaHei), negative display tracking (tightens Chinese), per-`lang` tracking (silent when the attribute is missing), all-fluid sizes (small text becomes unreadable) | Accepted (Owner) |
+| ADR-010 | 2026-11-07 | Spacing, sizing, radius, borders: 4px grid with a 2px half-step and 14 steps (carried from canonical `design.md` §7.1); controls 32/40/48 with a 44×44 effective-target rule on touch surfaces; icons 16/20/24/32 with 20 as default; radius follows the Apple ladder 0/5/8/11/18/pill/full at the Owner's request, overriding canonical `design.md` §7.3 (`0/4/6/8/12/16/24/9999`); borders 1px, 2px only for focus or validated selected outlines, no 0.5px; nested surfaces never exceed their container's radius | The 4px grid keeps every dimension derivable with one mental unit; three control heights cover dense, default, and touch use without an ambiguous fourth; Apple's ladder gives a restrained shape grammar (8 for controls, 11 for capsules, 18 for cards, pill only for actions). The radius override is recorded rather than silent, and radius is a shape scale so it need not snap to the spacing grid. Alternatives rejected: 8px grid (loses 4 and 12), 36/44/52 controls (loose desktop), 16/24/32 icons (no 20px default), canonical radius scale (overridden by the explicit Apple request), 0.5px borders (inconsistent rendering) | Accepted (Owner) |
 
 ### 2.6 Deprecation policy
 
@@ -366,6 +404,7 @@ Specification-level changes are listed here; file history lives in git.
 | `0.1.0` | 2026-11-07 | DAB-009 proposed — 16px integer scale, 400/600 weights, zero tracking, fluid display/h1 (§5.5); awaiting approval | Draft |
 | `0.1.0` | 2026-11-07 | DAB-009 ratified — typography domain complete; ten scale tokens added to frontmatter | Draft |
 | `0.1.0` | 2026-11-07 | DAB-010 proposed — 4px spacing, 32/40/48 controls, 16/20/24/32 icons, Apple radius ladder, 1px borders (§6.4); awaiting approval | Draft |
+| `0.1.0` | 2026-11-07 | DAB-010 ratified — spacing, sizing, radius, and border tokens added to frontmatter | Draft |
 
 ---
 
@@ -955,8 +994,9 @@ fluid sizes (rejected — small text can shrink below readable sizes).
 
 ## 6. Spacing, Sizing, Radius & Borders — decision area
 
-> **DAB-010 proposed (§6.4).** No spacing, sizing, radius, or border value is
-> a standard until its decision is Approved.
+> **Space and shape domain complete — DAB-010 approved (§6.4).** No spacing,
+> sizing, radius, or border value is a standard unless it appears in the
+> frontmatter or in that section.
 
 ### 6.1 Questions
 
@@ -976,12 +1016,13 @@ fluid sizes (rejected — small text can shrink below readable sizes).
 
 | ID | Question | Status |
 |---|---|---|
-| `DAB-010` | Spacing scale, control heights, icon sizes, radius scale, border rules | Proposed — §6.4 |
+| `DAB-010` | Spacing scale, control heights, icon sizes, radius scale, border rules | Approved — §6.4 |
 
-### 6.4 Proposed answer — DAB-010 (pending Owner approval)
+### 6.4 DAB-010 — Spacing, sizing, radius, borders (approved 2026-11-07)
 
-> **Status: Proposed, not approved.** No spacing, sizing, radius, or border
-> value is a standard until the Owner accepts this section.
+> **Status: Approved (Owner, 2026-11-07) — ADR-010.** Values are in the
+> frontmatter (`spacing`, `sizing`, `radius`, `border` groups); this section
+> explains intent and usage.
 
 **Spacing — 4px grid.** Fourteen steps; the scale is carried from the canonical
 `design.md` §7.1, which is already 4px-based, with a 2px half-step for fine
@@ -1301,7 +1342,7 @@ frontmatter if a token is involved, and adding a changelog row.
 | `DAB-007` | Overlay | Token and opacity | DAB-005 | **Approved (2026-11-07)** — ADR-007 |
 | `DAB-008` | Typeface | Family, fallbacks, licensing, loading | DAB-001 | **Approved (2026-11-07)** — ADR-008 |
 | `DAB-009` | Type scale | Roles, sizes, weights, tracking, casing | DAB-008 | **Approved (2026-11-07)** — ADR-009 |
-| `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | Proposed (2026-11-07) — §6.4 |
+| `DAB-010` | Space & shape | Spacing scale, control heights, icons, radius, borders | DAB-001 | **Approved (2026-11-07)** — ADR-010 |
 | `DAB-011` | Elevation & motion | Levels, values; durations, easing, reduced motion | DAB-001 | Open |
 | `DAB-012` | Layout | Breakpoints, containers, gutters, grid | DAB-001 | Open |
 | `DAB-013` | Component scope | Shared-layer pilot set and order | most | Open |
