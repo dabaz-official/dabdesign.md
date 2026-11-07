@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DabWave Foundation Test Page</title>
+<link rel="preload" href="./fonts/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./foundation.css">
+<script src="./foundation.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <div>
+      <p class="text-caption masthead__eyebrow">DabWave Design System · 0.1.0</p>
+      <h1 class="text-h2">Foundation test page</h1>
+      <p class="text-body-sm masthead__sub">Only ratified values appear here. Every ratio in section 10 is computed from the rendered CSS variables.</p>
+    </div>
+    <div class="masthead__tools">
+      <output id="viewport-readout" class="text-caption" aria-live="polite">measuring…</output>
+      <div class="segmented" role="group" aria-label="Theme">
+        <button type="button" class="segmented__btn" data-theme-value="system" aria-pressed="true">System</button>
+        <button type="button" class="segmented__btn" data-theme-value="light" aria-pressed="false">Light</button>
+        <button type="button" class="segmented__btn" data-theme-value="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <section id="theme" class="section" aria-labelledby="theme-title">
+    <h2 id="theme-title" class="text-h2">1 · Brand and theme</h2>
+    <p class="text-body">Light and dark are first-class themes. Every semantic role keeps its name; only the resolved value changes. The logo is not present in this repository and is not recreated here — the original keeps its non-rounded form.</p>
+
+    <div class="surface-row">
+      <div class="surface-chip surface-chip--bg"><code>color-background</code><span data-role-primitive="background">gray-50</span></div>
+      <div class="surface-chip surface-chip--surface"><code>color-surface</code><span data-role-primitive="surface">gray-0</span></div>
+      <div class="surface-chip surface-chip--secondary"><code>color-surface-secondary</code><span data-role-primitive="surface-secondary">gray-100</span></div>
+    </div>
+
+    <h3 class="text-h3">Text hierarchy</h3>
+    <div class="text-stack">
+      <p class="text-body">Primary text — the default voice for every page.</p>
+      <p class="text-body text-secondary">Secondary text — supporting copy that stays readable.</p>
+      <p class="text-body text-tertiary">Tertiary text — hints and metadata; still at least 4.5:1.</p>
+      <p class="text-body text-disabled">Disabled text — contrast-exempt but perceivable.</p>
+      <p class="text-body text-inverse inverse-sample">Inverse text on an inverted surface.</p>
+    </div>
+
+    <h3 class="text-h3">Overlay</h3>
+    <div class="overlay-demo">
+      <p class="text-body overlay-demo__page">Page content behind the scrim. The scrim signals modality; it never claims separation in dark mode.</p>
+      <div class="overlay-demo__scrim" aria-hidden="true"></div>
+      <div class="overlay-demo__dialog">
+        <p class="text-label">Dialog surface</p>
+        <p class="text-body-sm">Border-strong carries the boundary; the shadow is never the only cue.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="palette" class="section" aria-labelledby="palette-title">
+    <h2 id="palette-title" class="text-h2">2 · Neutral palette</h2>
+    <p class="text-body">Thirteen frozen steps, shared by every site. Pure neutral, C = 0.</p>
+    <div class="swatch-grid" id="swatches"></div>
+  </section>
+
+  <section id="type" class="section" aria-labelledby="type-title">
+    <h2 id="type-title" class="text-h2">3 · Typography</h2>
+    <p class="text-body">Inter for Latin, Noto Sans SC for CJK, self-hosted. Two weights only: 400 and 600. Zero tracking on every role.</p>
+    <div id="type-specimens"></div>
+  </section>
+
+  <section id="spacing" class="section" aria-labelledby="spacing-title">
+    <h2 id="spacing-title" class="text-h2">4 · Spacing</h2>
+    <p class="text-body">A 4px grid with a 2px half-step. No free values.</p>
+    <div class="space-list" id="space-list"></div>
+
+    <h3 class="text-h3">Applied</h3>
+    <div class="applied-grid">
+      <div class="applied applied--inline">
+        <span class="applied__label text-caption">inline gap · space-2</span>
+        <div class="inline-gap"><span class="chip">One</span><span class="chip">Two</span><span class="chip">Three</span></div>
+      </div>
+      <div class="applied applied--stack">
+        <span class="applied__label text-caption">stack · space-4</span>
+        <div class="stack-gap"><span class="chip">Alpha</span><span class="chip">Beta</span></div>
+      </div>
+      <div class="applied applied--card">
+        <span class="applied__label text-caption">card padding · space-6</span>
+        <div class="pad-card text-body-sm">Card content sits inside 24px of padding.</div>
+      </div>
+      <div class="applied applied--section">
+        <span class="applied__label text-caption">section rhythm · space-16</span>
+        <div class="rhythm-demo"><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="radius" class="section" aria-labelledby="radius-title">
+    <h2 id="radius-title" class="text-h2">5 · Radius</h2>
+    <p class="text-body">The Apple ladder, adopted at the Owner's request. Radius is a shape scale, not a spacing scale. The logo is never rounded.</p>
+    <div class="radius-grid" id="radius-grid"></div>
+  </section>
+
+  <section id="sizing" class="section" aria-labelledby="sizing-title">
+    <h2 id="sizing-title" class="text-h2">6 · Sizing</h2>
+    <p class="text-body">Icon sizes and control heights. Components are not yet Adopted; these are dimension specimens, not a component library.</p>
+    <h3 class="text-h3">Icons</h3>
+    <div class="icon-row" id="icon-row"></div>
+    <h3 class="text-h3">Control heights</h3>
+    <div class="control-row" id="control-row"></div>
+  </section>
+
+  <section id="surfaces" class="section" aria-labelledby="surfaces-title">
+    <h2 id="surfaces-title" class="text-h2">7 · Borders, surfaces and states</h2>
+    <h3 class="text-h3">Border roles</h3>
+    <div class="border-grid">
+      <div class="border-box border-box--decorative"><code>color-border</code><span class="text-caption">Decorative divider and card edge</span></div>
+      <div class="border-box border-box--interactive"><code>color-border-strong</code><span class="text-caption">Interactive boundary, at least 3:1</span></div>
+    </div>
+
+    <h3 class="text-h3">States</h3>
+    <div class="state-grid">
+      <div class="state">
+        <p class="text-label">Focus</p>
+        <button type="button" class="demo-button">Focus me</button>
+        <p class="text-caption">2px outline, 2px offset, 3.14:1 minimum on surfaces.</p>
+      </div>
+      <div class="state">
+        <p class="text-label">Disabled</p>
+        <button type="button" class="demo-button demo-button--disabled" disabled>Unavailable</button>
+        <p class="text-caption">Not opacity-only; text-disabled and a quiet surface.</p>
+      </div>
+      <div class="state">
+        <p class="text-label">Selected</p>
+        <label class="select-demo"><input type="checkbox" checked> <span>Selected with a check cue</span></label>
+        <p class="text-caption">Color never carries selection alone.</p>
+      </div>
+      <div class="state">
+        <p class="text-label">Error</p>
+        <p class="alert alert--danger"><span aria-hidden="true">!</span> Check the file name and try again.</p>
+        <p class="text-caption">Text, icon and color together.</p>
+      </div>
+      <div class="state">
+        <p class="text-label">Loading</p>
+        <div class="skeleton" role="status" aria-label="Loading content"><span></span><span></span></div>
+        <p class="text-caption">Layout-preserving; announced.</p>
+      </div>
+    </div>
+
+    <h3 class="text-h3">Elevation and motion</h3>
+    <div class="motion-grid">
+      <div class="floating-demo">
+        <p class="text-label">shadow-floating</p>
+        <p class="text-caption">2px 4px 16px rgba(0, 0, 0, 0.16) — hover lift and floating layers only.</p>
+      </div>
+      <div>
+        <p class="text-label">Durations</p>
+        <ul class="token-list text-body-sm">
+          <li><code>duration-fast</code> 100ms — color and opacity</li>
+          <li><code>duration-base</code> 200ms — tooltip and dropdown</li>
+          <li><code>duration-slow</code> 300ms — card lift, dialog, drawer</li>
+          <li><code>easing-standard</code> cubic-bezier(0, 0, 0.5, 1)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="layout" class="section" aria-labelledby="layout-title">
+    <h2 id="layout-title" class="text-h2">8 · Layout</h2>
+    <p class="text-body">Mobile-first. Breakpoints are minimum widths; content decides when to change.</p>
+
+    <h3 class="text-h3">Containers</h3>
+    <div class="container-list" id="container-list"></div>
+
+    <h3 class="text-h3">12-column grid</h3>
+    <div class="grid12" aria-hidden="true">
+      <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+      <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+    </div>
+
+    <h3 class="text-h3">Cards reflow by usable width</h3>
+    <div class="auto-grid">
+      <div class="auto-card text-body-sm">Card one</div>
+      <div class="auto-card text-body-sm">Card two</div>
+      <div class="auto-card text-body-sm">Card three</div>
+      <div class="auto-card text-body-sm">Card four</div>
+    </div>
+  </section>
+
+  <section id="responsive" class="section" aria-labelledby="responsive-title">
+    <h2 id="responsive-title" class="text-h2">9 · Responsive behavior</h2>
+    <p class="text-body">Active range: <strong id="active-range">—</strong>. Readout: <span id="viewport-inline">—</span>.</p>
+    <table class="data-table text-body-sm">
+      <thead>
+        <tr><th scope="col">Token</th><th scope="col">Min width</th><th scope="col">Container default</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>breakpoint-sm</code></td><td>640px</td><td><code>container-sm</code> 640px</td></tr>
+        <tr><td><code>breakpoint-md</code></td><td>768px</td><td><code>container-md</code> 768px</td></tr>
+        <tr><td><code>breakpoint-lg</code></td><td>1024px</td><td><code>container-lg</code> 1024px</td></tr>
+        <tr><td><code>breakpoint-xl</code></td><td>1280px</td><td><code>container-xl</code> 1200px</td></tr>
+        <tr><td><code>breakpoint-2xl</code></td><td>1536px</td><td><code>container-2xl</code> 1280px</td></tr>
+      </tbody>
+    </table>
+    <p class="text-caption">Review widths: 375, 390, 640, 768, 1024, 1280, 1536.</p>
+  </section>
+
+  <section id="contrast" class="section" aria-labelledby="contrast-title">
+    <h2 id="contrast-title" class="text-h2">10 · Contrast checks</h2>
+    <p class="text-body">Computed from the rendered CSS variables with the WCAG 2.2 relative-luminance formula. Failures are never hidden.</p>
+    <p class="text-body-sm" id="contrast-summary" aria-live="polite">Calculating…</p>
+    <div class="table-scroll">
+      <table class="data-table data-table--contrast text-body-sm">
+        <thead>
+          <tr><th scope="col">Pair</th><th scope="col">Ratio</th><th scope="col">Minimum</th><th scope="col">Verdict</th></tr>
+        </thead>
+        <tbody id="contrast-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="text-caption">DabWave Foundation Test Page · values from <code>DabDesign.md</code> · <span id="build-date">2026-11-07</span></p>
+  </div>
+</footer>
+</body>
+</html>
